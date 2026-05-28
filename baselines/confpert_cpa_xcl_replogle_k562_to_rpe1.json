@@ -1,0 +1,198 @@
+{
+  "config": {
+    "dataset": "replogle_k562_to_rpe1",
+    "predictor": "cpa",
+    "split_type": "cross_cell_line",
+    "epochs": 50
+  },
+  "fit_sec": 1841.6156296730042,
+  "n_pred_pops": 35,
+  "calibration_results": {
+    "alpha_0.05": {
+      "ks": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.5484747545582048,
+        "achieved_coverage": 0.5428571428571428,
+        "calibration_deviation": 0.40714285714285714,
+        "n_test": 35,
+        "test_scores_mean": 0.5613274680141559,
+        "test_scores_max": 0.6443761814744801
+      },
+      "w1": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.28056313229524876,
+        "achieved_coverage": 0.6,
+        "calibration_deviation": 0.35,
+        "n_test": 35,
+        "test_scores_mean": 0.2938649671516841,
+        "test_scores_max": 0.40168125387757564
+      },
+      "energy": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.38947433830782663,
+        "achieved_coverage": 0.6,
+        "calibration_deviation": 0.35,
+        "n_test": 35,
+        "test_scores_mean": 0.4053904483215715,
+        "test_scores_max": 0.5213269900499842
+      },
+      "mmd_rbf": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.144378066125455,
+        "achieved_coverage": 0.6857142857142857,
+        "calibration_deviation": 0.26428571428571423,
+        "n_test": 35,
+        "test_scores_mean": 0.1505251523301136,
+        "test_scores_max": 0.29079943518079476
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.5326086956521738,
+        "achieved_coverage": 1.0,
+        "calibration_deviation": 0.050000000000000044,
+        "n_test": 35,
+        "test_scores_mean": 0.4419254658385093,
+        "test_scores_max": 0.5326086956521738
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.7361320846248418,
+        "achieved_coverage": 0.8285714285714286,
+        "calibration_deviation": 0.12142857142857133,
+        "n_test": 35,
+        "test_scores_mean": 0.8043552420627768,
+        "test_scores_max": 2.6732507862527752
+      }
+    },
+    "alpha_0.1": {
+      "ks": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.5453964194373401,
+        "achieved_coverage": 0.5142857142857142,
+        "calibration_deviation": 0.3857142857142858,
+        "n_test": 35,
+        "test_scores_mean": 0.5613274680141559,
+        "test_scores_max": 0.6443761814744801
+      },
+      "w1": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.253116731669925,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.9,
+        "n_test": 35,
+        "test_scores_mean": 0.2938649671516841,
+        "test_scores_max": 0.40168125387757564
+      },
+      "energy": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.3415076172837816,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.9,
+        "n_test": 35,
+        "test_scores_mean": 0.4053904483215715,
+        "test_scores_max": 0.5213269900499842
+      },
+      "mmd_rbf": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.11114501790619635,
+        "achieved_coverage": 0.02857142857142857,
+        "calibration_deviation": 0.8714285714285714,
+        "n_test": 35,
+        "test_scores_mean": 0.1505251523301136,
+        "test_scores_max": 0.29079943518079476
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.5108695652173914,
+        "achieved_coverage": 0.9714285714285714,
+        "calibration_deviation": 0.0714285714285714,
+        "n_test": 35,
+        "test_scores_mean": 0.4419254658385093,
+        "test_scores_max": 0.5326086956521738
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.7180589544979107,
+        "achieved_coverage": 0.7714285714285715,
+        "calibration_deviation": 0.12857142857142856,
+        "n_test": 35,
+        "test_scores_mean": 0.8043552420627768,
+        "test_scores_max": 2.6732507862527752
+      }
+    },
+    "alpha_0.2": {
+      "ks": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.4679951690821257,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.8,
+        "n_test": 35,
+        "test_scores_mean": 0.5613274680141559,
+        "test_scores_max": 0.6443761814744801
+      },
+      "w1": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.2027371850047383,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.8,
+        "n_test": 35,
+        "test_scores_mean": 0.2938649671516841,
+        "test_scores_max": 0.40168125387757564
+      },
+      "energy": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.2898912128972675,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.8,
+        "n_test": 35,
+        "test_scores_mean": 0.4053904483215715,
+        "test_scores_max": 0.5213269900499842
+      },
+      "mmd_rbf": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.0500808795157206,
+        "achieved_coverage": 0.0,
+        "calibration_deviation": 0.8,
+        "n_test": 35,
+        "test_scores_mean": 0.1505251523301136,
+        "test_scores_max": 0.29079943518079476
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.4565217391304348,
+        "achieved_coverage": 0.7142857142857143,
+        "calibration_deviation": 0.08571428571428574,
+        "n_test": 35,
+        "test_scores_mean": 0.4419254658385093,
+        "test_scores_max": 0.5326086956521738
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.6830819681914442,
+        "achieved_coverage": 0.2,
+        "calibration_deviation": 0.6000000000000001,
+        "n_test": 35,
+        "test_scores_mean": 0.8043552420627768,
+        "test_scores_max": 2.6732507862527752
+      }
+    }
+  }
+}
