@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "confpert"
+version = "0.2.0rc2"
+description = "Calibrated distributional uncertainty for single-cell perturbation predictors via finite-sample conformal prediction."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Aayan Alwani", email = "alwaniaayan6@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = ["conformal-prediction", "single-cell", "perturb-seq", "calibration", "uncertainty-quantification"]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "pandas>=2.1",
+    "torch>=2.1",
+    "anndata>=0.10",
+    "scanpy>=1.10",
+    "matplotlib>=3.8",
+    "tqdm>=4.66",
+    "pyyaml>=6.0",
+    "statsmodels>=0.14",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+]
+modal = [
+    "modal>=1.0",
+]
+
+[project.scripts]
+confpert = "confpert.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q -m 'not integration'"
+markers = [
+    "integration: real-data integration tests; require cached h5ad locally (run with `pytest -m integration`)",
+]
