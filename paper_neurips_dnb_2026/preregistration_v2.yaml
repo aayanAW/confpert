@@ -1,0 +1,485 @@
+version: '1.0'
+project: confpert
+phase: 2
+companion_md: preregistration_v2.md
+supersedes_v1: false
+phase1_commit: c7046e4b4c08106acd52c37e7ea8410e126d2ae4
+created: '2026-05-25'
+author: Aayan Alwani
+lock:
+  git_commit_md: 3b0660917c9daaf8e5235429c50d4611eca430dd
+  git_commit_yaml: b94c64d9586f7acd9413688a4859638c9343153d
+  sha256_md: 20d3f5053fed375b315e342c41976de967e667899a8d88ad19524109aa1c054a
+  sha256_yaml: d5ddf69686270083ce0a0c0dc67a0ad5c9e317f7946e8cb349a5c2bf4a8e924f
+  osf_doi: null
+  results_json_max_mtime: null
+  random_seed: 42
+k1_v2:
+  predictors:
+  - id: mean
+    family: F1_baselines
+    noise_variants:
+    - A
+    - B
+    - C
+    - D
+    param_count: 0
+    corpus_diversity_index: 0
+    license: MIT
+  - id: ahlmann_bilinear_ridge
+    family: F1_baselines
+    noise_variants:
+    - A
+    param_count: 10000
+    corpus_diversity_index: 1
+    license: MIT
+  - id: noisy_mean
+    family: F1_baselines
+    noise_variants:
+    - A
+    param_count: 0
+    corpus_diversity_index: 0
+    license: MIT
+  - id: scgen
+    family: F2_latent_delta
+    param_count: 1.0e6
+    corpus_diversity_index: 1
+    license: BSD-3
+  - id: cpa
+    family: F2_latent_delta
+    param_count: 5.0e6
+    corpus_diversity_index: 1
+    license: BSD-3
+  - id: biolord
+    family: F2_latent_delta
+    param_count: 2.0e7
+    corpus_diversity_index: 1
+    license: BSD-3
+  - id: svaeplus
+    family: F2_latent_delta
+    param_count: 1.0e7
+    corpus_diversity_index: 1
+    license: Apache-2.0
+  - id: gears_uncertainty
+    family: EXCLUDED_H3
+    param_count: 5.0e7
+    corpus_diversity_index: 1
+    license: MIT
+    excluded_from_h3_reason: "GNN architecture, distinct from F1/F2/F3, n=1 \u2192\
+      \ untestable as own family"
+  - id: state
+    family: F3_transformer
+    param_count: 6.0e8
+    corpus_diversity_index: 100
+    license: Arc-NC
+  - id: scgpt
+    family: F3_transformer
+    param_count: 1.0e8
+    corpus_diversity_index: 33
+    license: MIT
+  - id: scfoundation
+    family: F3_transformer
+    param_count: 1.0e8
+    corpus_diversity_index: 50
+    license: Apache-2.0
+  - id: geneformer
+    family: F3_transformer
+    param_count: 1.0e7
+    corpus_diversity_index: 30
+    license: Apache-2.0
+  - id: cellfm
+    family: F3_transformer
+    param_count: 8.0e8
+    corpus_diversity_index: 100
+    license: Apache-2.0
+  - id: get
+    family: EXCLUDED_H3
+    param_count: 5.0e7
+    corpus_diversity_index: 213
+    license: MIT
+    excluded_from_h3_reason: "chromatin-conditioned, distinct input modality (ATAC\
+      \ + sequence, not RNA only), n=1 \u2192 untestable as own family"
+  datasets:
+  - id: norman
+    cell_line_context: K562
+    phase: 1
+    license: CC-BY
+  - id: replogle_k562
+    cell_line_context: K562
+    phase: 1
+    license: CC-BY
+  - id: replogle_rpe1
+    cell_line_context: non-K562
+    phase: 1
+    license: CC-BY
+  - id: adamson
+    cell_line_context: K562
+    phase: 1
+    license: CC-BY
+  - id: tahoe
+    cell_line_context: non-K562
+    phase: 1
+    license: Vevo-clearance-required
+  - id: frangieh
+    cell_line_context: non-K562
+    phase: 2
+    license: CC-BY
+    needs_license_check: true
+  - id: schmidt
+    cell_line_context: non-K562
+    phase: 2
+    license: CC-BY
+  - id: datlinger
+    cell_line_context: non-K562
+    phase: 2
+    license: CC-BY
+  - id: mcfaline_figueroa
+    cell_line_context: non-K562
+    phase: 2
+    license: CC-BY
+  - id: lara_astiaso
+    cell_line_context: primary
+    phase: 2
+    license: CC-BY
+    organism: mouse
+    substitutes: walker
+    amendment_note: 'Substituted for walker 2026-05-25 after the ''Walker et al. Nature
+      Methods
+
+      2022 BMDC Perturb-seq'' citation could not be cross-verified (GSE189574
+
+      supplied only normalized xlsx, not raw counts). Lara-Astiaso et al.
+
+      Nature Genetics 2023 ex-vivo mouse hematopoietic Perturb-seq fills the
+
+      same mouse-organism slot from the scperturb harmonized corpus
+
+      (Zenodo 13350497). See confpert/data/lara_astiaso.py and walker.py.
+
+      '
+  splits:
+  - id: within_perturbation
+    phase: 1
+  - id: held_out_perturbation
+    phase: 1
+  - id: cross_cell_line
+    phase: 1
+  - id: held_out_organism
+    phase: 2
+    train_dataset: lara_astiaso
+    test_dataset: norman
+  - id: held_out_modality
+    phase: 2
+    train_dataset: frangieh
+    test_dataset: frangieh
+    modality_train: rna
+    modality_test: protein
+  - id: held_out_perturbation_type
+    phase: 2
+    train_dataset: replogle_k562
+    test_dataset: tahoe
+  discrepancies:
+  - ks
+  - w1
+  - energy
+  - mmd_rbf
+  - bimodality_mismatch
+  - variance_ratio_dev
+  alphas:
+  - 0.05
+  - 0.1
+  - 0.2
+  heavyweight_restriction:
+    heavyweight_predictors:
+    - scgpt
+    - scfoundation
+    - geneformer
+    - state
+    - cellfm
+    allowed_datasets:
+    - norman
+    - replogle_k562
+    - replogle_rpe1
+    - tahoe
+    - frangieh
+    - schmidt
+    rationale: "Modal compute cap of $3000 forces restriction; missing cells reported\
+      \ as N/A per prereg v2 \xA71.6"
+k2_v2:
+  family_alpha: 0.05
+  bonferroni_n: 3
+  per_hypothesis_alpha: 0.0167
+  hypotheses:
+    H1_capacity:
+      family_member: false
+      alpha: 0.05
+      test: spearman_per_dataset
+      x_field: predictor.param_count
+      x_transform: log10
+      y_field: calibration_deviation
+      y_aggregation: mean_over_alphas_and_discrepancies
+      success_criteria:
+      - test: rho
+        operator: '>'
+        threshold: 0.5
+      - test: p_value
+        operator: <
+        threshold: 0.05
+        permutation_test: true
+        n_permutations: 10000
+      - test: n_datasets_passing
+        operator: '>='
+        threshold: 3
+        of_total: 4
+        main_datasets:
+        - norman
+        - replogle_k562
+        - replogle_rpe1
+        - tahoe
+      disposition_pass: capacity_hurts_calibration_confirmed
+      disposition_fail: carried_over_phase1_null
+    H1b_data:
+      family_member: false
+      alpha: 0.05
+      test: spearman_per_dataset
+      x_field: n_train_cells_per_perturbation
+      x_transform: log10
+      y_field: calibration_deviation
+      y_aggregation: mean_over_alphas_and_discrepancies
+      success_criteria:
+      - test: rho
+        operator: <
+        threshold: -0.5
+      - test: p_value
+        operator: <
+        threshold: 0.05
+        permutation_test: true
+        n_permutations: 10000
+      - test: n_datasets_passing
+        operator: '>='
+        threshold: 3
+        of_total: 4
+        main_datasets:
+        - norman
+        - replogle_k562
+        - replogle_rpe1
+        - tahoe
+      disposition_pass: data_helps_calibration_confirmed
+      disposition_fail: carried_over_phase1_null
+    H2_cell_line_covariate:
+      family_member: true
+      alpha: 0.0167
+      test: two_way_anova_type2
+      dependent: calibration_deviation
+      factors:
+      - cell_line_context
+      - predictor.param_count_log
+      main_effect_of_interest: cell_line_context
+      success_criteria:
+      - test: f_test_pvalue
+        target: main_effect_cell_line_context
+        operator: <
+        threshold: 0.0167
+      - test: eta_squared
+        target: main_effect_cell_line_context
+        operator: '>'
+        threshold: 0.1
+      disposition_pass: cell_line_context_load_bearing
+      disposition_fail: cell_line_context_null
+    H2b_corpus_diversity:
+      family_member: true
+      alpha: 0.0167
+      test: spearman_per_dataset
+      x_field: predictor.corpus_diversity_index
+      x_transform: log10
+      y_field: calibration_deviation
+      y_aggregation: mean_over_alphas_and_discrepancies
+      success_criteria:
+      - test: rho
+        operator: <
+        threshold: -0.5
+      - test: p_value
+        operator: <
+        threshold: 0.0167
+        permutation_test: true
+        n_permutations: 10000
+      - test: n_datasets_passing
+        operator: '>='
+        threshold: 7
+        of_total: 10
+      disposition_pass: corpus_diversity_load_bearing
+      disposition_fail: corpus_diversity_null
+      caveat: "Per-dataset n=14 predictors is underpowered for \u03C1=-0.5; \u2265\
+        7-of-10 rule compensates. Documented in prereg v2 \xA72.7 + \xA76."
+    H3_architecture_family:
+      family_member: true
+      alpha: 0.0167
+      test: kruskal_wallis
+      groups_field: predictor.family
+      excluded_families:
+      - EXCLUDED_H3
+      dependent: calibration_deviation
+      dependent_aggregation: mean_over_alphas_and_discrepancies
+      sample_unit: per_predictor_per_dataset
+      success_criteria:
+      - test: kw_pvalue
+        operator: <
+        threshold: 0.0167
+      - test: cliffs_delta_best_vs_worst
+        operator: '>'
+        threshold: 0.5
+      disposition_pass: architecture_family_load_bearing
+      disposition_fail: architecture_family_null
+      power_analysis_note: 'Threshold raised from delta>0.30 (Phase 2A RC1) to delta>0.50
+        (large effect by
+
+        Cohen''s convention) after empirical power analysis (confpert.power.k2_v2_power_report)
+
+        revealed delta=0.30 was substantially underpowered at the post-aggregation-fix
+
+        sample size of ~40 per family (0.36 power). At delta=0.50 with n_per_group=40,
+
+        n_simulations=2000, alpha=0.0167, simulated power is >=0.80. Trade-off:
+
+        large-effect threshold loses sensitivity to medium effects, but it is the
+
+        statistically-defensible choice at the data we will have.
+
+        '
+  outcome_table:
+    H2=P,H2b=P,H3=P: triple_pass
+    H2=P,H2b=P,H3=F: double_pass_no_arch
+    H2=P,H2b=F,H3=P: double_pass_no_corpus
+    H2=F,H2b=P,H3=P: double_pass_no_cell_line
+    H2=P,H2b=F,H3=F: H2_only
+    H2=F,H2b=P,H3=F: H2b_only
+    H2=F,H2b=F,H3=P: H3_only
+    H2=F,H2b=F,H3=F: triple_null_promote_ablation_panel
+  h3_intervention:
+    run_only_if: H3 PASSES
+    conditional_design:
+    - if:
+        best_family: F1_baselines
+      intervention: scale F2 latent-delta predictor (svaeplus) capacity 10x and retrain
+      target_predictor: svaeplus_100m
+    - if:
+        best_family: F2_latent_delta
+        worst_family: F3_transformer
+      intervention: add latent-delta encoder-decoder split head to a transformer baseline
+      target_predictor: scgpt_with_latent_delta_head
+    - if:
+        best_family: F3_transformer
+        worst_family: F2_latent_delta
+      intervention: add a frozen pre-trained transformer encoder to a latent-delta
+        predictor
+      target_predictor: scgen_with_frozen_scgpt_encoder
+    - if:
+        best_family: F3_transformer
+        worst_family: F1_baselines
+      intervention: augment a F1 baseline with transformer-derived gene embeddings
+        as features
+      target_predictor: bilinear_with_scgpt_embeddings
+    - default: null
+      intervention: "skip \u2014 no clean architectural axis identified"
+    success_criterion:
+      type: relative_calibration_deviation_reduction
+      threshold: 0.3
+      n_datasets_passing: 3
+      of_datasets:
+      - norman
+      - replogle_k562
+      - replogle_rpe1
+      - tahoe
+      - frangieh
+    cost_cap_usd: 300
+k3_v2:
+  k3a_target_match:
+    description: Of ConfPert-passing signatures, fraction whose top-5 Hallmark hits
+      include a pathway containing the drug's DrugBank/ChEMBL known target
+    success_criterion:
+      test: fraction_with_target_match
+      operator: '>='
+      threshold: 0.3
+  k3b_l2_ablation:
+    description: Re-run K3 with L2-error-ranked signatures; compute ConfPert/L2 BH-FDR
+      ratio
+    success_criterion:
+      test: confpert_over_l2_bh_ratio
+      operator: '>='
+      threshold: 1.3
+  k3c_adversarial_worked_examples:
+    description: Manually inspect 3 specific compounds where ConfPert passes BH-FDR
+      but L2-ranked does NOT
+    n_examples: 3
+    success_criterion:
+      test: n_plausible_mechanisms
+      operator: '>='
+      threshold: 2
+prereg_ablation_panel:
+  triggered_if: k2_v2.disposition == triple_null_promote_ablation_panel
+  promoted_to_tier1: true
+  pipeline_a: pre_registered (this YAML)
+  pipeline_b: threshold_shopped (analyst-chosen post-hoc to maximize pass count)
+  reporting:
+    table_fields:
+    - hypothesis
+    - prereg_threshold
+    - prereg_result
+    - shopped_threshold
+    - shopped_result
+    - delta
+  disclosure: Pipeline B run after Pipeline A; shopped thresholds documented explicitly;
+    no claim that B would have been chosen, only that B is a plausible counterfactual
+sensitivity_checks:
+  h3_alternative_families:
+  - n_families: 2
+    collapse: baselines_vs_deep_learning
+  - n_families: 4
+    split: F3_into_small_transformer_and_large_transformer
+  - n_families: 5
+    un_collapsed: true
+  h2_alternative_dichotomies:
+  - cancer_vs_primary
+  - human_vs_mouse
+  - K562_vs_non_K562_primary
+  - crispri_vs_crispra_vs_chemical
+  h1_h1b_rerun_on_expanded_grid:
+    use_phase1_thresholds: true
+  pareto_calibration_vs_l2: true
+  per_discrepancy_hardness_ranking: true
+  bootstrap_ci:
+    n_resamples: 1000
+    stratify_by: perturbation
+    confidence_level: 0.95
+  sensitivity_n_eval_perts:
+  - 15
+  - 30
+  - 60
+  within_vs_between_family_variance: true
+power_analysis:
+  framework: statsmodels.stats.power + GPower 3.1 verification
+  code_path: paper_neurips_dnb_2026/power_analysis_v2.py
+  results:
+    H2_anova_min_detectable_eta_sq: 0.07
+    H2_threshold: 0.1
+    H2_power_at_threshold: '>= 0.80'
+    H2b_spearman_per_dataset_min_detectable_rho: 0.62
+    H2b_threshold: -0.5
+    H2b_per_dataset_status: underpowered_at_individual_level
+    H2b_compensation: "\u22657 of 10 datasets rule"
+    H3_kruskal_wallis_min_detectable_cliffs_delta: 0.2
+    H3_threshold: 0.3
+    H3_power_at_threshold: '>= 0.80'
+verification:
+  steps:
+  - parse_yaml
+  - verify_sha256_self
+  - verify_git_commit_yaml
+  - load_results_json
+  - verify_results_json_mtime_after_lock
+  - 'for_each_hypothesis: run_test'
+  - apply_outcome_table
+  - emit_disposition_headline
+  - hash_and_sign_verification_output
+  output_format: json+text
+  output_path: paper_neurips_dnb_2026/prereg_v2_verification_<TIMESTAMP>.json

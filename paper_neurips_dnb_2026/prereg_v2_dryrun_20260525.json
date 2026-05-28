@@ -1,0 +1,128 @@
+{
+  "timestamp": "2026-05-25T04:52:32.560057",
+  "prereg_yaml_path": "paper_neurips_dnb_2026/preregistration_v2.yaml",
+  "prereg_yaml_sha256": "b5395d4aaac3db82eb0acda4aec39f753c7faab5b08140d146faaeea23d82e1f",
+  "prereg_yaml_git_commit": null,
+  "results_json_path": "baselines/results.json",
+  "results_json_sha256": "4db1dadaabf8fdca5654dce23f9756eafa341744e0124d294420fb09cf011059",
+  "results_json_mtime": 1779660472.5450578,
+  "yaml_lock_mtime": null,
+  "lock_check_passed": true,
+  "hypothesis_results": [
+    {
+      "hypothesis_id": "H1_capacity",
+      "status": "DRY_RUN",
+      "observed": {
+        "test_declared": "spearman_per_dataset",
+        "n_total_rows_in_results": 367
+      },
+      "threshold": {
+        "rho": {
+          "operator": ">",
+          "threshold": 0.5
+        },
+        "p_value": {
+          "operator": "<",
+          "threshold": 0.05
+        },
+        "n_datasets_passing": {
+          "operator": ">=",
+          "threshold": 3
+        }
+      },
+      "n_cells_used": 367,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H1b_data",
+      "status": "DRY_RUN",
+      "observed": {
+        "test_declared": "spearman_per_dataset",
+        "n_total_rows_in_results": 367
+      },
+      "threshold": {
+        "rho": {
+          "operator": "<",
+          "threshold": -0.5
+        },
+        "p_value": {
+          "operator": "<",
+          "threshold": 0.05
+        },
+        "n_datasets_passing": {
+          "operator": ">=",
+          "threshold": 3
+        }
+      },
+      "n_cells_used": 367,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H2_cell_line_covariate",
+      "status": "DRY_RUN",
+      "observed": {
+        "test_declared": "two_way_anova_type2",
+        "n_total_rows_in_results": 367
+      },
+      "threshold": {
+        "f_test_pvalue": {
+          "operator": "<",
+          "threshold": 0.0167
+        },
+        "eta_squared": {
+          "operator": ">",
+          "threshold": 0.1
+        }
+      },
+      "n_cells_used": 367,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H2b_corpus_diversity",
+      "status": "DRY_RUN",
+      "observed": {
+        "test_declared": "spearman_per_dataset",
+        "n_total_rows_in_results": 367
+      },
+      "threshold": {
+        "rho": {
+          "operator": "<",
+          "threshold": -0.5
+        },
+        "p_value": {
+          "operator": "<",
+          "threshold": 0.0167
+        },
+        "n_datasets_passing": {
+          "operator": ">=",
+          "threshold": 7
+        }
+      },
+      "n_cells_used": 367,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H3_architecture_family",
+      "status": "DRY_RUN",
+      "observed": {
+        "test_declared": "kruskal_wallis",
+        "n_total_rows_in_results": 367
+      },
+      "threshold": {
+        "kw_pvalue": {
+          "operator": "<",
+          "threshold": 0.0167
+        },
+        "cliffs_delta_best_vs_worst": {
+          "operator": ">",
+          "threshold": 0.3
+        }
+      },
+      "n_cells_used": 367,
+      "error": null
+    }
+  ],
+  "disposition_headline": null,
+  "dry_run": true,
+  "errors": []
+}
