@@ -1,0 +1,107 @@
+{
+  "n_selective_compounds": 10,
+  "n_hallmark_pathways": 50,
+  "n_confpert_signatures": 63,
+  "n_uncalibrated_signatures": 65,
+  "confpert_hallmark_grid_size": 3150,
+  "uncalibrated_hallmark_grid_size": 3250,
+  "k3_success_check": {
+    "success": true,
+    "n_confpert_signatures": 445,
+    "n_uncalibrated_misses_on_confpert_signatures": 363,
+    "confpert_bh_cutoff": 0.006682983637669091,
+    "uncalibrated_bh_cutoff": 0.007608199035285875,
+    "min_n_signatures_required": 3,
+    "uncalibrated_failure_threshold": 2,
+    "q": 0.05,
+    "confpert_signatures": [
+      [
+        "BRD-A06352418-001-25-9",
+        "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+      ],
+      [
+        "BRD-A06352418-001-25-9",
+        "HALLMARK_TNFA_SIGNALING_VIA_NFKB"
+      ],
+      [
+        "BRD-A16439188-001-01-1",
+        "HALLMARK_HYPOXIA"
+      ],
+      [
+        "BRD-A16439188-001-01-1",
+        "HALLMARK_KRAS_SIGNALING_UP"
+      ],
+      [
+        "BRD-A16439188-001-01-1",
+        "HALLMARK_MTORC1_SIGNALING"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_CHOLESTEROL_HOMEOSTASIS"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_HYPOXIA"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_MTORC1_SIGNALING"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_PROTEIN_SECRETION"
+      ],
+      [
+        "BRD-A26690767-066-01-9",
+        "HALLMARK_TNFA_SIGNALING_VIA_NFKB"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_HEDGEHOG_SIGNALING"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_HYPOXIA"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_INTERFERON_GAMMA_RESPONSE"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_MITOTIC_SPINDLE"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_MTORC1_SIGNALING"
+      ],
+      [
+        "BRD-K01095011-001-15-9",
+        "HALLMARK_TNFA_SIGNALING_VIA_NFKB"
+      ],
+      [
+        "BRD-K01577834-001-15-1",
+        "HALLMARK_ANGIOGENESIS"
+      ],
+      [
+        "BRD-K01577834-001-15-1",
+        "HALLMARK_GLYCOLYSIS"
+      ],
+      [
+        "BRD-K01577834-001-15-1",
+        "HALLMARK_HEDGEHOG_SIGNALING"
+      ]
+    ]
+  },
+  "data_sources": {
+    "prism_primary": "data/k3/prism_24q2_lfc_collapsed.csv",
+    "hallmark_msigdb": "data/k3/hallmark_msigdb_v2024.gmt",
+    "depmap_crispr": "synthetic",
+    "confpert_pred": "synthetic",
+    "uncalibrated_pred": "synthetic"
+  }
+}
