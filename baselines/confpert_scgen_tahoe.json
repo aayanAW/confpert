@@ -1,0 +1,198 @@
+{
+  "config": {
+    "dataset": "tahoe",
+    "predictor": "scgen",
+    "epochs": 100,
+    "n_eval_perts": 30
+  },
+  "fit_sec": 5.188092947006226,
+  "n_pred_pops": 30,
+  "calibration_results": {
+    "alpha_0.05": {
+      "ks": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.663515625,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.6468398437499999,
+        "test_scores_max": 0.66802734375
+      },
+      "w1": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.1563659016302319,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.1443065150097131,
+        "test_scores_max": 0.20112944291053342
+      },
+      "energy": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.2529591176657592,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.23960657972116464,
+        "test_scores_max": 0.2938160647235898
+      },
+      "mmd_rbf": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.030729055404663086,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.022447800636291503,
+        "test_scores_max": 0.04689610004425049
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.396484375,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.358984375,
+        "test_scores_max": 0.416015625
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.05,
+        "target_coverage": 0.95,
+        "tau": 0.7667043217594122,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.016666666666666607,
+        "n_test": 15,
+        "test_scores_mean": 0.7303747731925834,
+        "test_scores_max": 0.9116595358824717
+      }
+    },
+    "alpha_0.1": {
+      "ks": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.663515625,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.6468398437499999,
+        "test_scores_max": 0.66802734375
+      },
+      "w1": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.1563659016302319,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.1443065150097131,
+        "test_scores_max": 0.20112944291053342
+      },
+      "energy": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.2529591176657592,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.23960657972116464,
+        "test_scores_max": 0.2938160647235898
+      },
+      "mmd_rbf": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.030729055404663086,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.022447800636291503,
+        "test_scores_max": 0.04689610004425049
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.396484375,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.358984375,
+        "test_scores_max": 0.416015625
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.1,
+        "target_coverage": 0.9,
+        "tau": 0.7667043217594122,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.033333333333333326,
+        "n_test": 15,
+        "test_scores_mean": 0.7303747731925834,
+        "test_scores_max": 0.9116595358824717
+      }
+    },
+    "alpha_0.2": {
+      "ks": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.65138671875,
+        "achieved_coverage": 0.8,
+        "calibration_deviation": 0.0,
+        "n_test": 15,
+        "test_scores_mean": 0.6468398437499999,
+        "test_scores_max": 0.66802734375
+      },
+      "w1": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.15276438249852037,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.1333333333333333,
+        "n_test": 15,
+        "test_scores_mean": 0.1443065150097131,
+        "test_scores_max": 0.20112944291053342
+      },
+      "energy": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.2441282573096089,
+        "achieved_coverage": 0.8666666666666667,
+        "calibration_deviation": 0.06666666666666665,
+        "n_test": 15,
+        "test_scores_mean": 0.23960657972116464,
+        "test_scores_max": 0.2938160647235898
+      },
+      "mmd_rbf": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.025270581245422363,
+        "achieved_coverage": 0.8666666666666667,
+        "calibration_deviation": 0.06666666666666665,
+        "n_test": 15,
+        "test_scores_mean": 0.022447800636291503,
+        "test_scores_max": 0.04689610004425049
+      },
+      "bimodality_mismatch": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.396484375,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.1333333333333333,
+        "n_test": 15,
+        "test_scores_mean": 0.358984375,
+        "test_scores_max": 0.416015625
+      },
+      "variance_ratio_dev": {
+        "alpha": 0.2,
+        "target_coverage": 0.8,
+        "tau": 0.7498726179454412,
+        "achieved_coverage": 0.9333333333333333,
+        "calibration_deviation": 0.1333333333333333,
+        "n_test": 15,
+        "test_scores_mean": 0.7303747731925834,
+        "test_scores_max": 0.9116595358824717
+      }
+    }
+  }
+}

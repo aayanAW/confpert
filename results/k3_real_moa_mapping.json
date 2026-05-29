@@ -1,0 +1,107 @@
+{
+  "n_selective_compounds": 10,
+  "n_hallmark_pathways": 50,
+  "n_confpert_signatures": 8,
+  "n_uncalibrated_signatures": 10,
+  "confpert_hallmark_grid_size": 400,
+  "uncalibrated_hallmark_grid_size": 500,
+  "k3_success_check": {
+    "success": true,
+    "n_confpert_signatures": 243,
+    "n_uncalibrated_misses_on_confpert_signatures": 212,
+    "confpert_bh_cutoff": 0.027276357906824585,
+    "uncalibrated_bh_cutoff": 0.0055948832721537875,
+    "min_n_signatures_required": 3,
+    "uncalibrated_failure_threshold": 2,
+    "q": 0.05,
+    "confpert_signatures": [
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_APOPTOSIS"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_DNA_REPAIR"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_E2F_TARGETS"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_G2M_CHECKPOINT"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_GLYCOLYSIS"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_MITOTIC_SPINDLE"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_MTORC1_SIGNALING"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_MYC_TARGETS_V1"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_MYC_TARGETS_V2"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_P53_PATHWAY"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_PI3K_AKT_MTOR_SIGNALING"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_SPERMATOGENESIS"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_UNFOLDED_PROTEIN_RESPONSE"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_ALLOGRAFT_REJECTION"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_ANDROGEN_RESPONSE"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_ANGIOGENESIS"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_APOPTOSIS"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_DNA_REPAIR"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_E2F_TARGETS"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION"
+      ]
+    ]
+  },
+  "data_sources": {
+    "prism_primary": "data/k3/prism_24q2_lfc_collapsed.csv",
+    "hallmark_msigdb": "data/k3/hallmark_msigdb_v2024.gmt",
+    "depmap_crispr": "synthetic",
+    "confpert_pred": "synthetic",
+    "uncalibrated_pred": "synthetic"
+  }
+}

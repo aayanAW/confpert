@@ -1,0 +1,35 @@
+{
+  "n_selective_compounds": 49,
+  "n_hallmark_pathways": 50,
+  "n_confpert_signatures": 49,
+  "n_uncalibrated_signatures": 49,
+  "confpert_hallmark_grid_size": 2450,
+  "uncalibrated_hallmark_grid_size": 2450,
+  "k3_success_check": {
+    "success": false,
+    "n_confpert_signatures": 2,
+    "n_uncalibrated_misses_on_confpert_signatures": 2,
+    "confpert_bh_cutoff": 3.583011943575875e-05,
+    "uncalibrated_bh_cutoff": 0.0,
+    "min_n_signatures_required": 3,
+    "uncalibrated_failure_threshold": 2,
+    "q": 0.05,
+    "confpert_signatures": [
+      [
+        "DRUG_07",
+        "HALLMARK_DNA_REPAIR"
+      ],
+      [
+        "DRUG_07",
+        "HALLMARK_E2F_TARGETS"
+      ]
+    ]
+  },
+  "data_sources": {
+    "prism_primary": "synthetic",
+    "hallmark_msigdb": "data/k3/hallmark_msigdb_v2024.gmt",
+    "depmap_crispr": "synthetic",
+    "confpert_pred": "synthetic",
+    "uncalibrated_pred": "synthetic"
+  }
+}

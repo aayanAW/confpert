@@ -1,0 +1,91 @@
+{
+  "n_rows": 1110,
+  "predictors_present": [
+    "ahlmann_bilinear_ridge",
+    "biolord",
+    "gears_uncertainty",
+    "mean",
+    "noisy_mean",
+    "scgen"
+  ],
+  "datasets_present": [
+    "adamson",
+    "norman",
+    "replogle_k562",
+    "replogle_rpe1"
+  ],
+  "H1_capacity_hypothesis": {
+    "hypothesis": "H1",
+    "alternative": "greater",
+    "n_datasets_tested": 4,
+    "n_datasets_passing_threshold": 0,
+    "preregistered_success_at_least_3_of_4": false,
+    "per_dataset": {
+      "adamson": {
+        "rho": -0.35909242322980395,
+        "p_value": 0.7433256674332567,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      },
+      "norman": {
+        "rho": 0.4928053803045812,
+        "p_value": 0.1553844615538446,
+        "n_predictors": 6,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_k562": {
+        "rho": -0.8207826816681234,
+        "p_value": 0.9506049395060494,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_rpe1": {
+        "rho": 0.5642880936468347,
+        "p_value": 0.19608039196080393,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      }
+    }
+  },
+  "H1b_data_hypothesis_per_dataset": {
+    "hypothesis": "H1b",
+    "alternative": "less",
+    "n_datasets_tested": 4,
+    "n_datasets_passing_threshold": 0,
+    "preregistered_success_at_least_3_of_4": false,
+    "per_dataset": {
+      "adamson": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      },
+      "norman": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 6,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_k562": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_rpe1": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 5,
+        "passes_preregistered_threshold": false
+      }
+    }
+  },
+  "H1b_data_hypothesis_cross_dataset": {
+    "hypothesis": "H1b_cross_dataset",
+    "rho": -0.39999999999999997,
+    "p_value": 0.36876312368763126,
+    "n_datasets": 4,
+    "passes_preregistered_threshold": false
+  },
+  "preregistration_commit": "c7046e4b4c08106acd52c37e7ea8410e126d2ae4"
+}

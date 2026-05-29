@@ -1,0 +1,107 @@
+{
+  "n_selective_compounds": 10,
+  "n_hallmark_pathways": 50,
+  "n_confpert_signatures": 10,
+  "n_uncalibrated_signatures": 10,
+  "confpert_hallmark_grid_size": 500,
+  "uncalibrated_hallmark_grid_size": 500,
+  "k3_success_check": {
+    "success": true,
+    "n_confpert_signatures": 73,
+    "n_uncalibrated_misses_on_confpert_signatures": 50,
+    "confpert_bh_cutoff": 0.007225853401897363,
+    "uncalibrated_bh_cutoff": 0.013678773319045085,
+    "min_n_signatures_required": 3,
+    "uncalibrated_failure_threshold": 2,
+    "q": 0.05,
+    "confpert_signatures": [
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_ADIPOGENESIS"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_BILE_ACID_METABOLISM"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_COMPLEMENT"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_ESTROGEN_RESPONSE_EARLY"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_HEME_METABOLISM"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_KRAS_SIGNALING_DN"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_TNFA_SIGNALING_VIA_NFKB"
+      ],
+      [
+        "BRD-K00003273-003-01-9",
+        "HALLMARK_UV_RESPONSE_DN"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_COAGULATION"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_ESTROGEN_RESPONSE_EARLY"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_ESTROGEN_RESPONSE_LATE"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_PEROXISOME"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_SPERMATOGENESIS"
+      ],
+      [
+        "BRD-K00003406-001-01-9",
+        "HALLMARK_UV_RESPONSE_DN"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_ADIPOGENESIS"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_APICAL_JUNCTION"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_FATTY_ACID_METABOLISM"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_HEME_METABOLISM"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_MTORC1_SIGNALING"
+      ],
+      [
+        "BRD-K00003508-001-01-9",
+        "HALLMARK_P53_PATHWAY"
+      ]
+    ]
+  },
+  "data_sources": {
+    "prism_primary": "data/k3/prism_24q2_lfc_collapsed.csv",
+    "hallmark_msigdb": "data/k3/hallmark_msigdb_v2024.gmt",
+    "depmap_crispr": "synthetic",
+    "confpert_pred": "synthetic",
+    "uncalibrated_pred": "synthetic"
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "n_rows": 2028,
+  "predictors_present": [
+    "ahlmann_bilinear_ridge",
+    "biolord",
+    "cpa",
+    "gears_uncertainty",
+    "mean",
+    "noisy_mean",
+    "scgen",
+    "state",
+    "svaeplus"
+  ],
+  "datasets_present": [
+    "adamson",
+    "norman",
+    "replogle_k562",
+    "replogle_rpe1",
+    "tahoe"
+  ],
+  "H1_capacity_hypothesis": {
+    "hypothesis": "H1",
+    "alternative": "greater",
+    "n_datasets_tested": 5,
+    "n_datasets_passing_threshold": 2,
+    "preregistered_success_at_least_3_of_4": false,
+    "per_dataset": {
+      "adamson": {
+        "rho": -0.3096261412396175,
+        "p_value": 0.7991200879912009,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "norman": {
+        "rho": 0.5690426379538917,
+        "p_value": 0.05679432056794321,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_k562": {
+        "rho": 0.10041928905068676,
+        "p_value": 0.40515948405159485,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_rpe1": {
+        "rho": 0.7563025210084034,
+        "p_value": 0.012198780121987801,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": true
+      },
+      "tahoe": {
+        "rho": 0.7065994945288229,
+        "p_value": 0.032896710328967106,
+        "n_predictors": 8,
+        "passes_preregistered_threshold": true
+      }
+    }
+  },
+  "H1b_data_hypothesis_per_dataset": {
+    "hypothesis": "H1b",
+    "alternative": "less",
+    "n_datasets_tested": 5,
+    "n_datasets_passing_threshold": 0,
+    "preregistered_success_at_least_3_of_4": false,
+    "per_dataset": {
+      "adamson": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "norman": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_k562": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "replogle_rpe1": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 9,
+        "passes_preregistered_threshold": false
+      },
+      "tahoe": {
+        "rho": NaN,
+        "p_value": 9.999000099990002e-05,
+        "n_predictors": 8,
+        "passes_preregistered_threshold": false
+      }
+    }
+  },
+  "H1b_data_hypothesis_cross_dataset": {
+    "hypothesis": "H1b_cross_dataset",
+    "rho": -0.39999999999999997,
+    "p_value": 0.25807419258074193,
+    "n_datasets": 5,
+    "passes_preregistered_threshold": false
+  },
+  "preregistration_commit": "c7046e4b4c08106acd52c37e7ea8410e126d2ae4"
+}

@@ -1,0 +1,181 @@
+{
+  "headline": "Pre-registration prevented 1 of 5 hypotheses from being reported as PASS via post-hoc threshold relaxation. Without pre-registration, the headline would have included 1 additional PASS claims.",
+  "n_flipped": 1,
+  "rows": [
+    {
+      "hypothesis": "H1_capacity",
+      "test_type": "spearman_per_dataset",
+      "prereg_threshold": "rho > 0.5, p < 0.05, >= 3 datasets",
+      "prereg_result": "FAIL",
+      "shopped_threshold": "p<0.10 instead of p<0.05",
+      "shopped_result": "PASS (3 datasets pass shopped threshold)",
+      "flipped_to_pass": true,
+      "observed_stats": {
+        "shopped_rho_threshold": 0.5,
+        "shopped_p_threshold": 0.1,
+        "shopped_n_passing_threshold": 3,
+        "n_datasets_passing_shopped": 3,
+        "per_dataset": {
+          "adamson": {
+            "rho": -0.3096261412396175,
+            "p_value": 0.7991200879912009,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": 0.5690426379538917,
+            "p_value": 0.05679432056794321,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": 0.10041928905068676,
+            "p_value": 0.40515948405159485,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": 0.7563025210084034,
+            "p_value": 0.012198780121987801,
+            "n_predictors": 9,
+            "passes": true
+          },
+          "tahoe": {
+            "rho": 0.7065994945288229,
+            "p_value": 0.032896710328967106,
+            "n_predictors": 8,
+            "passes": true
+          }
+        }
+      }
+    },
+    {
+      "hypothesis": "H1b_data",
+      "test_type": "spearman_per_dataset",
+      "prereg_threshold": "rho < -0.5, p < 0.05, >= 3 datasets",
+      "prereg_result": "FAIL",
+      "shopped_threshold": "(no relaxation flips to PASS)",
+      "shopped_result": "FAIL",
+      "flipped_to_pass": false,
+      "observed_stats": {
+        "per_dataset": {
+          "adamson": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "tahoe": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 8,
+            "passes": false
+          }
+        }
+      }
+    },
+    {
+      "hypothesis": "H2_cell_line_covariate",
+      "test_type": "two_way_anova_type2",
+      "prereg_threshold": "F p < 0.0167, eta^2 > 0.1",
+      "prereg_result": "FAIL",
+      "shopped_threshold": "(no relaxation flips to PASS)",
+      "shopped_result": "FAIL",
+      "flipped_to_pass": false,
+      "observed_stats": {
+        "f_pvalue_cell_line_context": 0.11450855606238489,
+        "eta_squared_cell_line_context": 0.058792974152649106,
+        "n_cells": 44,
+        "n_K562_cells": 27,
+        "n_non_K562_cells": 17
+      }
+    },
+    {
+      "hypothesis": "H2b_corpus_diversity",
+      "test_type": "spearman_per_dataset",
+      "prereg_threshold": "rho < -0.5, p < 0.0167, >= 7 datasets",
+      "prereg_result": "FAIL",
+      "shopped_threshold": "(no relaxation flips to PASS)",
+      "shopped_result": "FAIL",
+      "flipped_to_pass": false,
+      "observed_stats": {
+        "per_dataset": {
+          "adamson": {
+            "rho": -0.13693063937629152,
+            "p_value": 0.44395560443955606,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": 0.5477225575051661,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": 0.4107919181288746,
+            "p_value": 0.8913108689131087,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": 0.41251432366269514,
+            "p_value": 0.8913108689131087,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "tahoe": {
+            "rho": 0.5773502691896258,
+            "p_value": 1.0,
+            "n_predictors": 8,
+            "passes": false
+          }
+        }
+      }
+    },
+    {
+      "hypothesis": "H3_architecture_family",
+      "test_type": "kruskal_wallis",
+      "prereg_threshold": "KW p < 0.0167, |delta| > 0.5",
+      "prereg_result": "FAIL",
+      "shopped_threshold": "(no relaxation flips to PASS)",
+      "shopped_result": "FAIL",
+      "flipped_to_pass": false,
+      "observed_stats": {
+        "kw_statistic": 5.435623475323703,
+        "kw_pvalue": 0.06601906350602582,
+        "cliffs_delta": 0.22666666666666666,
+        "best_family": "F1_baselines",
+        "worst_family": "F2_latent_delta",
+        "family_means": {
+          "F1_baselines": 0.09158388268651425,
+          "F2_latent_delta": 0.13861111111111107,
+          "F3_transformer": 0.11962962962962961
+        },
+        "family_n": {
+          "F1_baselines": 15,
+          "F2_latent_delta": 20,
+          "F3_transformer": 5
+        }
+      }
+    }
+  ]
+}

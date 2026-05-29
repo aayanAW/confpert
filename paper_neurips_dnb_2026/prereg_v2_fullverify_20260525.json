@@ -1,0 +1,204 @@
+{
+  "timestamp": "2026-05-25T05:26:20.061952+00:00",
+  "prereg_yaml_path": "paper_neurips_dnb_2026/preregistration_v2.yaml",
+  "prereg_yaml_sha256": "7bc09cae5be2e1babe3370bf53956823c041eefc2878d9e9455d10717c7d7ef3",
+  "prereg_yaml_git_commit": null,
+  "results_json_path": "baselines/results.json",
+  "results_json_sha256": "4db1dadaabf8fdca5654dce23f9756eafa341744e0124d294420fb09cf011059",
+  "results_json_mtime": 1779660472.5450578,
+  "yaml_lock_mtime": null,
+  "lock_check_passed": true,
+  "hypothesis_results": [
+    {
+      "hypothesis_id": "H1_capacity",
+      "status": "FAIL",
+      "observed": {
+        "n_datasets_passing": 2,
+        "datasets_passing": [
+          "replogle_rpe1",
+          "tahoe"
+        ],
+        "per_dataset": {
+          "adamson": {
+            "rho": -0.3096261412396175,
+            "p_value": 0.7991200879912009,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": 0.5690426379538917,
+            "p_value": 0.05679432056794321,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": 0.10041928905068676,
+            "p_value": 0.40515948405159485,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": 0.7563025210084034,
+            "p_value": 0.012198780121987801,
+            "n_predictors": 9,
+            "passes": true
+          },
+          "tahoe": {
+            "rho": 0.7065994945288229,
+            "p_value": 0.032896710328967106,
+            "n_predictors": 8,
+            "passes": true
+          }
+        }
+      },
+      "threshold": {
+        "rho": "> 0.5",
+        "p_value": "< 0.05",
+        "n_datasets_passing": ">= 3 of 4"
+      },
+      "n_cells_used": 44,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H1b_data",
+      "status": "FAIL",
+      "observed": {
+        "n_datasets_passing": 0,
+        "datasets_passing": [],
+        "per_dataset": {
+          "adamson": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "tahoe": {
+            "rho": NaN,
+            "p_value": 1.0,
+            "n_predictors": 8,
+            "passes": false
+          }
+        }
+      },
+      "threshold": {
+        "rho": "< -0.5",
+        "p_value": "< 0.05",
+        "n_datasets_passing": ">= 3 of 4"
+      },
+      "n_cells_used": 44,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H2_cell_line_covariate",
+      "status": "FAIL",
+      "observed": {
+        "f_pvalue_cell_line_context": 0.11450855606238489,
+        "eta_squared_cell_line_context": 0.058792974152649106,
+        "n_cells": 44,
+        "n_K562_cells": 27,
+        "n_non_K562_cells": 17
+      },
+      "threshold": {
+        "f_pvalue": "< 0.0167",
+        "eta_squared": "> 0.1"
+      },
+      "n_cells_used": 44,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H2b_corpus_diversity",
+      "status": "FAIL",
+      "observed": {
+        "n_datasets_passing": 0,
+        "datasets_passing": [],
+        "per_dataset": {
+          "adamson": {
+            "rho": -0.13693063937629152,
+            "p_value": 0.44395560443955606,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "norman": {
+            "rho": 0.5477225575051661,
+            "p_value": 1.0,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_k562": {
+            "rho": 0.4107919181288746,
+            "p_value": 0.8913108689131087,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "replogle_rpe1": {
+            "rho": 0.41251432366269514,
+            "p_value": 0.8913108689131087,
+            "n_predictors": 9,
+            "passes": false
+          },
+          "tahoe": {
+            "rho": 0.5773502691896258,
+            "p_value": 1.0,
+            "n_predictors": 8,
+            "passes": false
+          }
+        }
+      },
+      "threshold": {
+        "rho": "< -0.5",
+        "p_value": "< 0.0167",
+        "n_datasets_passing": ">= 7 of 10"
+      },
+      "n_cells_used": 44,
+      "error": null
+    },
+    {
+      "hypothesis_id": "H3_architecture_family",
+      "status": "FAIL",
+      "observed": {
+        "kw_statistic": 5.435623475323703,
+        "kw_pvalue": 0.06601906350602582,
+        "cliffs_delta": 0.22666666666666666,
+        "best_family": "F1_baselines",
+        "worst_family": "F2_latent_delta",
+        "family_means": {
+          "F1_baselines": 0.09158388268651425,
+          "F2_latent_delta": 0.13861111111111107,
+          "F3_transformer": 0.11962962962962961
+        },
+        "family_n": {
+          "F1_baselines": 15,
+          "F2_latent_delta": 20,
+          "F3_transformer": 5
+        }
+      },
+      "threshold": {
+        "kw_pvalue": "< 0.0167",
+        "cliffs_delta": "> 0.5"
+      },
+      "n_cells_used": 40,
+      "error": null
+    }
+  ],
+  "disposition_headline": "triple_null_promote_ablation_panel",
+  "dry_run": false,
+  "errors": []
+}

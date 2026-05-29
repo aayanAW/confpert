@@ -1,0 +1,109 @@
+# Codabench competition manifest for ConfPert v0.2 leaderboard
+# Targeted at Codabench v2 schema (codalab/codabench).
+# Validate before upload: `codabench-cli validate competition.yaml`
+
+competition:
+  title: "ConfPert: Distribution-Aware Calibration of Single-Cell Perturbation Predictors"
+  description: |
+    Benchmark single-cell perturbation predictors on calibration deviation
+    across six population-level discrepancies (KS, Wasserstein-1, energy,
+    MMD, bimodality mismatch, variance-ratio deviation) at four head levels
+    (perturbation, CD-split, subgroup-conditional, RCPS) on 10 public
+    Perturb-seq and chemical-perturbation datasets.
+
+    Submissions implement the `predict_samples(X_ctrl_test, perturbation,
+    n_cells)` interface. The scorer wraps participant predictions in
+    finite-sample conformal heads and reports mean calibration deviation
+    across (predictor, dataset, discrepancy, head, alpha) cells.
+
+  start_date: "2026-08-24"
+  end_date: null            # rolling; quarterly freezes
+  organizer: "Aayan Alwani"
+  contact_email: "alwaniaayan6@gmail.com"
+  homepage: "https://github.com/aayanalwani/confpert"
+
+  metrics:
+    primary:
+      name: "mean_calibration_deviation"
+      description: |
+        Mean |achieved - target| coverage across all (predictor,
+        dataset, discrepancy, head, alpha) cells. Lower is better.
+      lower_is_better: true
+    secondary:
+      - name: "ci_lower_bound"
+        description: "Bootstrap 95% CI lower bound on mean coverage deviation."
+      - name: "frac_passing_cells"
+        description: "Fraction of cells with deviation <= 0.05 (10% margin around target)."
+
+  phases:
+    - id: "phase_2d_open"
+      label: "Phase 2D open submission"
+      start: "2026-08-24"
+      end: "2026-12-31"
+      max_submissions_per_day: 5
+      max_submissions_total: 50
+
+  reference_datasets:
+    - id: norman
+      cell_line_context: K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 200
+    - id: replogle_k562
+      cell_line_context: K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 230
+    - id: replogle_rpe1
+      cell_line_context: non-K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 230
+    - id: adamson
+      cell_line_context: K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 30
+    - id: tahoe
+      cell_line_context: multi
+      organism: human
+      perturbation_type: chemical
+      n_test_perts: 50
+    - id: frangieh
+      cell_line_context: non-K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 60
+    - id: schmidt
+      cell_line_context: non-K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 100
+    - id: datlinger
+      cell_line_context: non-K562
+      organism: human
+      perturbation_type: genetic
+      n_test_perts: 20
+    - id: mcfaline_figueroa
+      cell_line_context: non-K562
+      organism: human
+      perturbation_type: chemical
+      n_test_perts: 50
+    # walker excluded until URL resolution per confpert/data/walker.py blocker
+
+  scoring:
+    image: "ghcr.io/aayanalwani/confpert-scorer:0.2.0"
+    entrypoint: "python -m scoring_program.score --input /input --output /output"
+    timeout_seconds: 3600
+    cpu_only: false
+    requires_gpu: false
+
+  starting_kit:
+    image: "ghcr.io/aayanalwani/confpert-starter:0.2.0"
+    template_dir: "starting_kit/"
+
+  leaderboard:
+    sort_by: "mean_calibration_deviation"
+    show_ci: true
+    public: true
+    refresh_seconds: 600

@@ -1,0 +1,614 @@
+% =============================================================================
+% ConfPert Phase 2 paper -- main.tex
+% Target: ICLR 2027 Datasets & Benchmarks (Sept-Oct 2026 deadline)
+% Template: NeurIPS D&B 2025 placeholder; swap to ICLR 2027 sty when CFP opens.
+% Compile: tectonic -X compile main.tex --reruns 4
+%
+% Rewrite rules applied (per the strict-prompt protocol):
+%   - [CITATION NEEDED] for unverified claims
+%   - [NEEDS USER INPUT] for missing experimental detail
+%   - Soften "first/novel/state-of-the-art" unless evidence supports
+%   - Methods reproducibility: dataset version + seed + hardware + commit SHA
+%   - Cite Csendes 2025 only for the empirical finding it actually reports
+%     (FMs lose to mean baseline on Perturb-seq), not for an "embedding-baseline
+%     mode" methodological recipe.
+%   - the abstract opening verb is used only there (no repetition elsewhere).
+% =============================================================================
+
+\documentclass[11pt]{article}
+
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{natbib}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{nicefrac}
+\usepackage{microtype}
+
+\newcommand{\TODO}[1]{{\color{red}\textbf{TODO:} #1}}
+\newcommand{\citeneeded}{{\color{orange}\textsf{[CITATION NEEDED]}}}
+\newcommand{\userinput}{{\color{orange}\textsf{[NEEDS USER INPUT]}}}
+
+\title{Capacity is not Calibration:\\
+A Pre-Registered Distribution-Aware Benchmark of Single-Cell Perturbation Predictors}
+
+\author{
+  Aayan Alwani \\
+  Independent Researcher \\
+  \texttt{alwaniaayan6@gmail.com}
+}
+
+\begin{document}
+\maketitle
+
+% =============================================================================
+% Abstract  (~200 words; written last, per strict-prompt STEP 6)
+% =============================================================================
+\begin{abstract}
+We introduce ConfPert, a benchmark that evaluates 12 single-cell
+perturbation predictors with finite-sample conformal coverage as the
+primary outcome rather than mean-prediction accuracy. The benchmark
+covers 8 publicly available Perturb-seq and chemical-perturbation
+datasets and ships with a machine-verifiable YAML pre-registration that
+a command-line verifier refuses to evaluate when the locked
+hypotheses, thresholds, or BH-FDR corrections do not match the results
+file. Across 651 locked $(\text{predictor}, \text{dataset}, \alpha,
+\text{discrepancy})$ cells, the pre-registered family-level
+Kruskal-Wallis test ($H_3$) rejects equality of calibration deviation
+between the baseline family ($F_1$, mean / bilinear-ridge / noisy-mean;
+$\bar d = 0.078$, $n = 25$) and the transformer-foundation-model family
+($F_3$, scGPT / scFoundation / Geneformer in frozen-encoder embedding
+mode; $\bar d = 0.154$, $n = 25$) at
+$p_\text{KW} = 1.7 \times 10^{-7}$ with Cliff's $\delta = 0.80$. The
+hypotheses on per-dataset capacity ($H_1$) and cell-line context ($H_2$)
+also pass; the hypotheses on training-corpus size ($H_{1b}$) and
+corpus-diversity ($H_{2b}$) fail. The result reproduces the perturbation
+prediction skepticism of \cite{ahlmann2025deep,csendes2025train} under a
+coverage criterion. We release the library on PyPI
+(\texttt{confpert v0.2.0rc2}), the pre-registration template, and a
+Codabench leaderboard for community submissions.
+\end{abstract}
+
+% =============================================================================
+% 1. Introduction  (~3/4 page)
+% =============================================================================
+\section{Introduction}
+
+Predicting single-cell responses to genetic or chemical perturbations is
+the headline application of single-cell foundation models. Recent
+benchmarks report that simple linear baselines match or exceed deep
+models on standard transcriptomic prediction metrics
+\cite{ahlmann2025deep,csendes2025train,kedzierska2025zeroshot}, but the
+metrics in these benchmarks are still primarily measures of mean-vector
+accuracy (MSE, Pearson, top-$k$ DEG recovery). For downstream uses such
+as cell-population sampling or risk-aware drug response, coverage of the
+predicted distribution -- not mean accuracy -- is the actionable
+property.
+
+We evaluate predictors by per-population conformal coverage. Six
+discrepancy scores -- Kolmogorov-Smirnov, 1-Wasserstein, energy,
+MMD-RBF, bimodality mismatch, and variance-ratio deviation -- are
+wrapped in finite-sample conformal heads \cite{vovk2012,tibshirani2019,
+romano2019,izbicki2022,cauchois2021,bates2021}, and we report
+calibration deviation
+$|{\hat{\alpha}} - \alpha|$ as the primary outcome. The pipeline is
+locked in a YAML pre-registration before any first run; a CLI verifier
+(\texttt{confpert prereg verify}) refuses to evaluate when the YAML and
+the results file disagree. Pre-registration in machine learning has
+been argued for \cite{hofman2023prereg,pineau2020reproducibility} but
+remains rare; the closest mechanically enforced precedents we are aware
+of are competition-style leaderboards (e.g.\ Kaggle), not
+hypothesis-level locks. \citeneeded{} for a single-cell-perturbation
+benchmark with a comparable mechanically enforced lock.
+
+\noindent\emph{Empirical finding.}
+The pre-registered Kruskal-Wallis test ($H_3$) rejects equality of
+calibration deviation across the three predictor families
+($p_\text{KW} = 1.7 \times 10^{-7}$, Cliff's $\delta = 0.80$). The
+baseline family ($F_1$) is the best-calibrated; the
+foundation-model family ($F_3$) is the worst. Per-dataset capacity
+($H_1$, 4 of 8 datasets at $\rho > 0.5,\, p < 0.05$) and cell-line
+context ($H_2$, two-way ANOVA $f$-$p = 0.0064$, $\eta^2 = 0.120$) also
+pass; corpus-size and corpus-diversity hypotheses ($H_{1b}$, $H_{2b}$)
+fail.
+
+\noindent\emph{Contributions.}
+\begin{itemize}
+  \item A benchmark of 12 published predictors across 8 public
+        single-cell perturbation datasets with within-perturbation and
+        cross-cell-line splits; 651 locked result cells.
+  \item A machine-verifiable YAML pre-registration with a CLI verifier
+        that refuses to run when the locked YAML and the results file
+        disagree.
+  \item An ablation panel that re-runs the same hypothesis tests under
+        counterfactual analyst-side relaxations, quantifying the
+        threshold-shopping bias avoided by the lock.
+  \item A pip-installable library, datasheet and model card, and a
+        Codabench leaderboard.
+\end{itemize}
+
+% =============================================================================
+% 2. Related work  (~1/2 page)
+% =============================================================================
+\section{Related work}
+
+\paragraph{Conformal prediction for multivariate and generative outputs.}
+Conformal prediction has been extended to the multivariate and
+generative-model setting in a recent cluster of methods
+\cite{meyer2026kernel,zheng2024generative,thurin2025optimal,
+ndiaye2025multivariate,dheur2025generalized,yang2026cp4gen,
+braun2025minvol,otcp2025}, including a perturbation-data application
+\cite{asiaee2026partial}. ConfPert sits downstream of this literature
+and operationalises six standard per-population discrepancies inside
+finite-sample conformal heads.
+
+\paragraph{Single-cell foundation models and perturbation prediction
+benchmarks.}
+Several recent benchmarks evaluate single-cell foundation models on
+perturbation tasks. \citet{ahlmann2025deep} compare five foundation
+models and two other deep learning models against deliberately simple
+baselines on Perturb-seq and report that none outperformed the
+baselines. \citet{csendes2025train} replicate the finding for scGPT and
+scFoundation against a mean-of-training-examples baseline.
+\citet{kedzierska2025zeroshot} show that scGPT and Geneformer can
+underperform simpler methods in zero-shot deployments.
+\citet{boiarsky2024deeper} reach a similar conclusion under a deeper
+single-cell foundation-model evaluation. \citet{li2025systematic}
+surveys the largest pool of perturbation predictors to date but reports
+accuracy-style scores (MSE, mean Pearson) rather than calibration
+coverage. ConfPert's incremental contribution is to add a coverage
+criterion, a finite-sample conformal head per discrepancy, and a
+mechanically enforced pre-registration.
+
+\paragraph{Pre-registration in machine learning.}
+Pre-registration is established in social and biomedical research
+\cite{nosek2018prereg} and has been argued for in predictive modelling
+\cite{hofman2023prereg,pineau2020reproducibility}. The
+\texttt{ConfPert} verifier extends this prior work by refusing to
+evaluate when the locked YAML and the on-disk results file disagree.
+
+% =============================================================================
+% 3. Benchmark design  (~1.5 pages, the contribution chapter)
+% =============================================================================
+\section{Benchmark design}
+\label{sec:design}
+
+\subsection{Predictors}
+\label{sec:predictors}
+We benchmark 12 predictors across three pre-registered family levels.
+$F_1$ baselines: mean (single Perturb-seq mean per perturbation),
+ahlmann\_bilinear\_ridge \cite{ahlmann2025deep} (additive model with
+ridge regularisation, $K = 10$, $\lambda = 0.1$), and noisy\_mean
+(mean with isotropic noise). $F_2$ latent-delta: scGen
+\cite{lotfollahi2019scgen}, biolord \cite{piran2024biolord}, CPA
+\cite{lotfollahi2023cpa}, sVAE\textsuperscript{+}
+\cite{bereket2023}, and STATE \cite{adduri2025state}. $F_3$
+transformer: GEARS \cite{roohani2024gears}, scGPT
+\cite{cui2024scgpt}, scFoundation \cite{hao2023scfoundation}, and
+Geneformer \cite{theodoris2023geneformer}.
+
+Foundation models run in frozen-encoder mode. A ridge regression head
+(\texttt{sklearn.linear\_model.Ridge}, $\alpha_\text{ridge} = 1.0$) is
+fitted on the train fold of cell-level encoder embeddings against the
+log1p HVG expression target; the per-gene sampling variance used in the
+predictive distribution is computed only on training-fold rows via
+\texttt{confpert.heavyweight\_helpers.safe\_train\_variance}, which
+raises if the supplied train and test row indices overlap. This
+test-fold isolation is enforced as code so that a future contributor
+cannot silently re-introduce the leak. Full fine-tuning of the
+foundation models is left to future work; the present results should be
+read as upper bounds on the F3 family under transfer-learning use, not
+as a verdict on the architectures.
+
+\subsection{Datasets}
+\label{sec:datasets}
+We use 8 datasets covered by at least one filled result row:
+Norman~2019 \cite{norman2019}, Replogle K562 and RPE1 essential
+\cite{replogle2022}, Adamson~2016 \cite{adamson2016}, Tahoe-100M
+subset \cite{tahoe2025}, Frangieh \cite{frangieh2021melanoma},
+Schmidt \cite{schmidt2022crispr}, Datlinger \cite{datlinger2017crop},
+and Lara-Astiaso~2023 ex-vivo mouse Perturb-seq \userinput{} for full
+in-text citation of the Lara-Astiaso 2023 Nature Genetics primary
+source. McFaline-Figueroa \cite{mcfaline2024sciplex} and CellFM
+\cite{zeng2024cellfm} are documented in the pre-registration but report
+as N/A in the result table (sample-meta hash-table demultiplexing for
+McFaline and absence of a usable HF mirror for CellFM as of
+2026-05-25). The mouse-organism slot was originally pre-registered for
+``Walker et al.\ Nature Methods 2022 BMDC Perturb-seq''; that
+citation could not be cross-verified, and the slot was substituted with
+Lara-Astiaso 2023 on 2026-05-25 with an explicit amendment block in
+the YAML lock (option B of the three documented resolution paths in
+\texttt{confpert/data/walker.py}).
+
+\subsection{Splits}
+Within-perturbation: each perturbation's cells are partitioned 50/25/25
+into train/calibration/test by seed 42; control cells are split
+proportionally. Held-out-perturbation: 50/50 perturbation-level split
+by the same seed. Cross-cell-line: train on Replogle K562, evaluate on
+Replogle RPE1 with gene-name intersection. Held-out-organism (train
+Lara-Astiaso, test Norman), held-out-modality (Frangieh RNA train,
+Frangieh protein test), and held-out-perturbation-type (Replogle K562
+train, Tahoe chemical test) splits are pre-registered but the
+held-out-modality and held-out-perturbation-type cells report as
+\userinput{} in the present run (those split-specific pipelines were
+not executed within the Modal budget).
+
+\subsection{Discrepancies and conformal heads}
+Six per-population discrepancies: Kolmogorov-Smirnov on per-gene
+marginals, 1-Wasserstein on per-gene marginals, energy distance
+\cite{szekely2013}, MMD with an RBF kernel \cite{romano2019,
+izbicki2022}, bimodality mismatch (KDE-based per-gene bimodality
+divergence), and variance-ratio deviation
+(\texttt{var(pred) / var(obs) - 1}). Each discrepancy is wrapped in a
+per-perturbation conformal head
+\cite{vovk2012,tibshirani2019,romano2019}; subgroup-conditional
+\cite{cauchois2021} and RCPS \cite{bates2021} heads are implemented in
+the library but evaluated as \userinput{} in this paper.
+
+\subsection{Pre-registration protocol}
+The hypotheses, thresholds, BH-FDR corrections, and disposition rules
+are committed to \texttt{paper\_neurips\_dnb\_2026/preregistration\_v2.yaml}
+before any first run; the file's git commit SHA and SHA-256 hash are
+written into the YAML's \texttt{lock} block. \texttt{confpert prereg
+verify} refuses to run if the on-disk YAML hash differs from the locked
+hash, if the git commit SHA on the YAML differs from the locked SHA, or
+if the \texttt{results\_json\_max\_mtime} field is exceeded by the
+results file's mtime. Re-emitting hashes
+(\texttt{confpert prereg emit-hashes}) is required after any
+intentional amendment and is itself recorded by a git commit.
+
+% =============================================================================
+% 4. Materials and Methods  (strict-prompt STEP 2: reproducibility-grade)
+% =============================================================================
+\section{Materials and Methods}
+\label{sec:methods}
+
+\noindent\emph{Software environment.}
+Python 3.11 (CPU) and 3.10 (CPA / scvi-tools subset). Key version pins:
+\texttt{torch 2.4.1} (\texttt{torch 2.3.1} in the scGPT image to keep
+\texttt{torchtext 0.18.0} ABI-compatible), \texttt{scvi-tools<1.4} for
+scGen / biolord, \texttt{cell-gears 0.1.2} for GEARS,
+\texttt{scgpt 0.2.4}, \texttt{transformers>=4.40,<4.46}. The full image
+graph (one per heavyweight predictor family) is defined in
+\texttt{scripts/modal\_launch.py}. \userinput{} for the exact Docker
+image SHA when frozen for camera-ready.
+
+\noindent\emph{Hardware.}
+Heavyweight predictor runs were executed on Modal A100 GPUs (one A100
+per (predictor, dataset) call, 24--32~GB host RAM); lightweight predictor
+runs on a local M-series Apple Silicon CPU. The Modal budget cap was
+\$3000; the actual total spend on the locked sweep was \userinput{} for
+the camera-ready figure.
+
+\noindent\emph{Datasets and preprocessing.}
+The eight datasets and their source URLs are listed in the YAML
+(\texttt{k1\_v2.datasets}) and reproduced in
+Appendix~\ref{sec:datasheet}. All datasets are loaded by the
+common pipeline (\texttt{confpert.data.\_load\_perturb\_ds}): drop
+cells with fewer than 200 UMI; drop genes detected in fewer than 5
+cells; \texttt{scanpy.pp.normalize\_total(target\_sum=1e4)};
+\texttt{scanpy.pp.log1p}; \texttt{scanpy.pp.highly\_variable\_genes}
+with $n_\text{top} = 512$. The top 50 perturbations by cell count are
+retained (29 for Datlinger). Random seed is 42 throughout.
+
+\noindent\emph{Predictor fitting.}
+$F_1$ predictors are fit on the train fold and noise variants A--D
+sweep isotropic, per-gene marginal, and full-covariance Gaussian noise.
+$F_2$ and $F_3$ predictors are fit per the upstream package defaults;
+all per-predictor configurations are stored in
+\texttt{baselines/results.json:rows[*].config}. Foundation models pass
+through \texttt{safe\_train\_variance} and
+\texttt{sample\_from\_train\_distribution}
+(\texttt{src/confpert/heavyweight\_helpers.py}); both refuse mis-split
+inputs.
+
+\noindent\emph{Discrepancy and conformal-head computation.}
+For each held-out perturbation $p$, we draw a predicted population
+$\hat{X}_p$ of size matching the observed cell count, compute each of
+the six discrepancies $s_i(\hat{X}_p, X_p)$, and run a finite-sample
+per-perturbation conformal calibration on the train half of the
+perturbations. The resulting threshold $\tau_\alpha$ is applied to the
+held-out perturbations and we report achieved coverage
+$\hat\alpha = \Pr[s_i \leq \tau_\alpha]$.
+
+\noindent\emph{Hypothesis tests.}
+$H_1$: Spearman $\rho$ between $\log_{10}(\text{param count})$ and mean
+calibration deviation per dataset; pass if $\rho > 0.5$, $p < 0.05$
+(permutation, $n = 10000$), in $\geq 3$ of 4 main datasets.
+$H_{1b}$: Spearman with training-corpus size, $\rho < -0.5$, same
+$\geq 3$ of 4 rule.
+$H_2$: Two-way Type-II ANOVA on calibration deviation with factors
+(cell-line context, $\log$ param count); pass if main-effect $f$-$p <
+0.0167$ (Bonferroni on 3 family tests) and $\eta^2 > 0.10$.
+$H_{2b}$: Spearman with $\log$ corpus diversity, $\rho < -0.5$,
+$p < 0.0167$, $\geq 7$ of 10 datasets.
+$H_3$: Kruskal-Wallis across the three families, $p < 0.0167$ and
+Cliff's $\delta > 0.50$ between best and worst.
+
+\noindent\emph{Bootstrap CIs and power.}
+Wilson 95\% binomial intervals are computed per
+(predictor, dataset, score, $\alpha$) cell; per-cell counts and
+intervals are reported in
+\texttt{phase2d\_report\_phase2.json:bootstrap\_ci\_table}. Power
+estimates use Monte Carlo with $n_\text{sims} = 2000$ for the
+Spearman / Kruskal tests and \texttt{statsmodels.stats.power.FTestAnovaPower}
+for the ANOVA.
+
+\noindent\emph{Reproduction.}
+\begin{verbatim}
+git checkout <commit-SHA>
+pip install -e .
+python -m confpert.cli phase2d \
+  --prereg paper_neurips_dnb_2026/preregistration_v2.yaml \
+  --results baselines/results.json \
+  --out paper_neurips_dnb_2026/phase2d_report_phase2.json
+\end{verbatim}
+
+% =============================================================================
+% 5. Results (strict-prompt STEP 3: numbers from verified outputs)
+% =============================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{K1 sweep}
+\label{sec:k1}
+The K1 sweep produced 651 cells across 12 predictors, 8 datasets, 3
+target coverage levels ($\alpha \in \{0.05, 0.10, 0.20\}$), and 6
+discrepancies. Mean calibration deviation per family is
+$\bar d_{F_1} = 0.078$ ($n = 25$ cells), $\bar d_{F_2} = 0.123$
+($n = 26$), and $\bar d_{F_3} = 0.154$ ($n = 25$). The
+per-discrepancy hardness rank (mean deviation across all
+predictor-dataset pairs, ascending) is KS $<$ bimodality\_mismatch $<$
+MMD-RBF $<$ $W_1$ $<$ energy $<$ variance\_ratio\_dev. The cross-dataset
+heatmap is in Figure~\ref{fig:k1heatmap} and the
+calibration-vs-capacity Pareto is in Figure~\ref{fig:pareto}; full
+per-cell results with Wilson 95\%~CIs are in Appendix~\ref{sec:k1full}
+and the JSON sidecar.
+
+\subsection{K2 v2 hypothesis tests}
+\label{sec:k2v2}
+The five pre-registered hypotheses resolved as follows
+(Table~\ref{tab:disp}).
+$H_1$ \emph{capacity} passes: 4 of 8 datasets (Norman, Frangieh,
+Replogle~RPE1, Tahoe) meet the per-dataset $\rho > 0.5$, $p < 0.05$
+rule. $H_{1b}$ \emph{data} fails: per-dataset Spearman is degenerate
+because many predictors share corpus size. $H_2$ \emph{cell-line
+context} passes: two-way ANOVA $f$-$p = 0.0064$ ($< 0.0167$) and
+$\eta^2 = 0.120$ ($> 0.10$). $H_{2b}$ \emph{corpus diversity} fails:
+$\rho > 0$ on every dataset (opposite sign of the hypothesised
+$\rho < -0.5$). $H_3$ \emph{architecture family} passes: Kruskal-Wallis
+$p = 1.7 \times 10^{-7}$ with Cliff's $\delta = 0.798$ between $F_3$
+transformer ($\bar d = 0.154$, $n = 25$) and $F_1$ baselines
+($\bar d = 0.078$, $n = 25$). The disposition emitted by the verifier
+is \texttt{double\_pass\_no\_corpus}.
+
+\begin{table}[h]
+\centering
+\caption{K2 v2 hypothesis dispositions (Phase 2D, verifier output).
+$f$-$p$ is the two-way Type-II ANOVA main-effect $p$-value for the
+cell-line-context factor; $p_\text{KW}$ is the Kruskal-Wallis $p$-value
+across the three families.}
+\label{tab:disp}
+\begin{tabular}{lll}
+\toprule
+Hypothesis & Status & Observed \\
+\midrule
+$H_1$ capacity & \textbf{PASS} & 4 of 8 datasets at $\rho > 0.5$, $p < 0.05$ \\
+$H_{1b}$ data & \textbf{FAIL} & 0 of 8 datasets ($\rho$ undefined per dataset) \\
+$H_2$ cell-line & \textbf{PASS} & $f$-$p = 0.0064$, $\eta^2 = 0.120$ \\
+$H_{2b}$ corpus & \textbf{FAIL} & per-dataset $\rho > 0$ on every dataset \\
+$H_3$ family & \textbf{PASS} & $p_\text{KW} = 1.7\!\times\!10^{-7}$, Cliff's $\delta = 0.80$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ablation panel}
+The ablation panel re-evaluates the same hypotheses under counterfactual
+analyst-side threshold relaxations. On a frozen Phase 1 snapshot
+(\texttt{tests/fixtures/phase1\_results.json}), the locked
+$p < 0.05$ threshold passes only one dataset (Replogle~RPE1) for
+$H_1$, but the relaxation $\{p < 0.10$ AND $n_\text{pass} \geq 2\}$
+admits a second passer (Tahoe, $p = 0.066$) and flips the disposition.
+Under the locked thresholds, the flip never occurs. On the Phase 2D
+full data, $H_1$ passes under the locked rule (4 of 8 datasets); the
+Phase 1 flip case is preserved as evidence of the bias the lock
+prevents.
+
+\noindent\emph{K3 PRISM downstream utility.}
+Of the 445 ConfPert-calibrated PRISM signatures \cite{corsello2020prism}
+that pass BH-FDR, the top-25 ranked by mean coverage deviation include
+14 (56\%) with at least one annotated drug-target match in DrugBank or
+ChEMBL. The full match table is at
+\texttt{results/k3\_tahoe\_predictor\_derived\_top25.json}.
+
+% =============================================================================
+% 6. Discussion  (strict-prompt STEP 4: obs + mechanism + comparison + future)
+% =============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Observation 1: foundation models are the worst-calibrated
+family.}
+$F_3$ transformer predictors used in frozen-encoder mode produce
+predictive populations with the largest calibration deviation across
+all six discrepancies. A plausible mechanism is that the frozen
+encoder embeddings, even when followed by a linear head fitted on the
+train fold, lose the per-gene variance structure required for matching
+the full Perturb-seq distribution; their advantage on supervised
+embedding-to-label tasks does not transfer to per-population sampling.
+The finding is consistent with \citet{ahlmann2025deep},
+\citet{csendes2025train}, and \citet{kedzierska2025zeroshot}, all of
+whom report that foundation models lose to a mean baseline on
+perturbation prediction under their respective accuracy metrics. The
+present paper adds the coverage criterion to that picture but does
+\emph{not} settle the full-fine-tune question: we evaluate the
+transfer-learning use mode (frozen encoder + ridge head) that
+practitioners adopt when downstream labels are scarce, and the result
+should be read with that scope in mind.
+
+\paragraph{Observation 2: cell-line context is a real covariate.}
+The two-way ANOVA $\eta^2 = 0.120$ on cell-line context exceeds the
+pre-registered threshold, indicating that calibration deviation
+systematically differs between K562-derived and non-K562 contexts. A
+plausible mechanism is that the training corpora for the F2 and F3
+predictors are heavily K562-weighted, leading to better calibration on
+in-distribution K562 splits than on the more diverse cell lines covered
+in Phase 2 (Frangieh melanoma, Schmidt T cells, Datlinger Jurkat).
+
+\paragraph{Observation 3: corpus diversity does not help calibration.}
+$H_{2b}$ predicted a negative correlation between log corpus diversity
+and mean calibration deviation; the observed sign is positive on every
+dataset. One reading is that predictors trained on broader corpora may
+overfit to corpus-level structure that does not transfer to held-out
+perturbations; another reading is that our corpus-diversity index
+(\texttt{predictor.corpus\_diversity\_index} in the YAML) is a poor
+proxy. A future experiment would re-fit each predictor on subsamples of
+a single source corpus to dissociate diversity from total cell count.
+
+\paragraph{Limitations.}
+\emph{Marginal, not conditional coverage.} Distribution-free conditional
+coverage is impossible \cite{vovk2012}; ConfPert reports marginal
+coverage within head levels.
+\emph{Cancer-corpus dominance.} 7 of 8 evaluated datasets are derived
+from cancer or transformed cell lines (Lara-Astiaso primary cells is the
+exception); the primary-cell shift remains a known confound.
+\emph{Heavyweight predictor restriction.} Per pre-reg \S 14.5, the F3
+family was evaluated on the 6 heavyweight-allowed datasets only;
+McFaline and Lara-Astiaso lack F3 cells. \emph{Frozen-encoder mode.}
+The F3 family is evaluated in transfer-learning use, not full fine-tune;
+a full \texttt{scgpt.Trainer.train\_perturb} implementation is left to
+future work and is expected to narrow but probably not close the gap.
+\emph{Power.} $H_1$, $H_{1b}$, $H_{2b}$ are individually underpowered at
+their target effect sizes (Appendix~\ref{sec:power}); the headline H3
+disposition is well-powered.
+
+\paragraph{Concrete future work.}
+(1) Re-evaluate $F_3$ under full perturbation fine-tune
+(\texttt{scgpt.Trainer.train\_perturb}) on the same six datasets and
+report the calibration gap that closes; an effect-size threshold of
+$\Delta \bar d \geq 0.05$ would meaningfully move the $H_3$
+disposition. (2) Run the same pre-registered tests on the Replogle
+Genome-Wide Perturb-seq (with appropriate compute) to test whether the
+H3 PASS replicates on a larger single-dataset sample. (3) Add a CellFM
+wrapper once a working PyTorch port appears
+(\texttt{biomed-AI/cellfm-800M} returns 404 as of 2026-05-25) and
+re-test $H_3$. (4) Replace the corpus-diversity index with a
+TF-IDF-style cell-type-coverage measure and re-test $H_{2b}$.
+
+% =============================================================================
+% 7. Library and reproducibility  (~1/2 page)
+% =============================================================================
+\section{Library and reproducibility}
+\label{sec:lib}
+
+The benchmark ships as \texttt{confpert} v0.2.0rc2 on PyPI with 126
+passing unit tests; a Cell-Eval plug-in covers 5 of 6 discrepancies
+absent from the upstream Arc Institute registry; a Codabench
+leaderboard at \texttt{paper\_neurips\_dnb\_2026/codabench/} accepts
+community submissions. The datasheet (\citealt{gebru2021datasheets};
+\texttt{paper\_neurips\_dnb\_2026/datasheet.md}) and model card
+(\citealt{mitchell2019model}; \texttt{model\_card.md}) follow the
+templates of their respective sources. The Modal volume
+\texttt{causeflow-artifacts} holds frozen h5ads and per-job result
+JSONs keyed to the locked YAML SHA.
+
+% =============================================================================
+% Bibliography
+% =============================================================================
+\bibliographystyle{plainnat}
+\bibliography{../bib/refs}
+
+\appendix
+
+% =============================================================================
+% Appendix A: Datasheet for the benchmark (Gebru et al. 2021)
+% =============================================================================
+\section{Datasheet for ConfPert}
+\label{sec:datasheet}
+
+The full datasheet
+(\citet{gebru2021datasheets} template) is at
+\texttt{paper\_neurips\_dnb\_2026/datasheet.md} and is inlined verbatim
+into the camera-ready appendix. It documents motivation, composition
+(per-dataset $n_\text{cells}$, perturbation modality, organism,
+license), collection process (URLs in \S\ref{sec:datasets}),
+preprocessing ($n_\text{hvg} = 512$ HVG selection, \texttt{log1p}
+normalisation), uses and tasks, and distribution and maintenance.
+
+% =============================================================================
+% Appendix B: Model card (Mitchell et al. 2019)
+% =============================================================================
+\section{Model card for the confpert library}
+\label{sec:modelcard}
+
+The model card is at \texttt{paper\_neurips\_dnb\_2026/model\_card.md}
+and is inlined verbatim into the camera-ready appendix. It covers
+model details (six conformal heads, one head level), intended use
+(calibration coverage benchmarks), factors (predictor family, dataset
+context), metrics (six discrepancies), evaluation data (the eight
+evaluated datasets), and ethical considerations (cancer-corpus
+dominance, primary-cell underrepresentation).
+
+% =============================================================================
+% Appendix C: Full K1 results
+% =============================================================================
+\section{Full K1 results with Wilson 95\% CIs}
+\label{sec:k1full}
+
+The per-cell K1 results (651 rows + Wilson 95\% intervals) are stored as
+a JSON sidecar at
+\texttt{paper\_neurips\_dnb\_2026/phase2d\_report\_phase2.json} under
+the key \texttt{bootstrap\_ci\_table}. Each row is keyed by
+(predictor, dataset, score, $\alpha$) and reports the held-out
+perturbation count, observed coverage $\hat p$, and CI bounds. The
+camera-ready will inline a 30-row summary leaderboard; the full table
+remains in the JSON to keep the PDF under the 9-page main-body cap.
+
+% =============================================================================
+% Appendix D: Verifier output
+% =============================================================================
+\section{Pre-registration verifier output}
+\label{sec:verifier}
+
+CLI reproduction:
+\begin{verbatim}
+python -m confpert.cli phase2d \
+  --prereg paper_neurips_dnb_2026/preregistration_v2.yaml \
+  --results baselines/results.json \
+  --out paper_neurips_dnb_2026/phase2d_report_phase2.json
+\end{verbatim}
+Verbatim disposition table is in Table~\ref{tab:disp};
+K2 v2 disposition: \texttt{double\_pass\_no\_corpus}.
+
+% =============================================================================
+% Appendix E: Power analysis
+% =============================================================================
+\section{Power analysis (K1 + K2 v2)}
+\label{sec:power}
+
+Pre-registered power computations (Phase 2D \texttt{power\_report}):
+
+\begin{tabular}{llll}
+\toprule
+Test & $n$ & target effect & estimated power \\
+\midrule
+$H_1$ per-dataset Spearman & 14 & $\rho = 0.5$ & 0.41 (underpowered) \\
+$H_{1b}$ cross-dataset Spearman & 10 & $\rho = -0.5$ & 0.25 (underpowered) \\
+$H_2$ two-way ANOVA & 120 & $\eta^2 = 0.10$ & 0.81 \\
+$H_{2b}$ per-dataset Spearman & 14 & $\rho = -0.5$ & 0.26 (underpowered) \\
+$H_3$ Kruskal-Wallis (3 families) & 120 & $\delta = 0.5$ & 0.92 \\
+\bottomrule
+\end{tabular}
+
+$H_1$, $H_{1b}$, and $H_{2b}$ are individually underpowered at their
+target effect sizes; the cross-dataset meta-analysis recovers usable
+power for $H_1$ in the headline disposition because the observed
+within-dataset effect sizes were larger than the target ($\rho \in
+[0.59, 0.71]$ on the passing datasets). $H_2$ and $H_3$ are
+independently well-powered.
+
+\end{document}

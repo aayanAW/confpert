@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+*.h5ad
+data/
+*.log
+debug/*.log
+.modal/
+.DS_Store
+external/
+logs/
+*.pid
+SLEEP_*.md
+SLEEP_PROGRESS_*.md
+HANDOFF_*.md
