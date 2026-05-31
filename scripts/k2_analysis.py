@@ -50,10 +50,30 @@ TRAIN_CELLS_BY_DATASET = {
     "tahoe_subset": 400,  # legacy alias if any results.json rows use this name
 }
 
+# Frozen K2 instrument (the set Table 2 / results/k2_preliminary.json was computed
+# on): the 9-predictor capacity ladder (8 pre-registered + NoisyMean control) and
+# the 5 pre-registered datasets. The Phase-2 foundation models
+# (geneformer/scgpt/scfoundation) and Phase-2 datasets (datlinger/frangieh/schmidt/
+# lara_astiaso) were added to baselines/results.json AFTER K2 was frozen; including
+# them silently assigns capacity x=0 to unknown predictors and corrupts the rho.
+# Restrict to these by default so a re-run reproduces the frozen 2-of-5 verdict.
+FROZEN_K2_PREDICTORS = (
+    "mean", "noisy_mean", "ahlmann_bilinear_ridge", "scgen", "cpa",
+    "svaeplus", "biolord", "gears_uncertainty", "state",
+)
+FROZEN_K2_DATASETS = (
+    "norman", "replogle_k562", "replogle_rpe1", "adamson", "tahoe",
+)
+
 
 def permutation_test_spearman(x: np.ndarray, y: np.ndarray, alternative: str = "greater",
                                n_perm: int = 10_000, seed: int = 0) -> tuple[float, float]:
     """Permutation test for Spearman correlation. Returns (rho, p_value).
+
+    Seeded Monte-Carlo (seed=0, n_perm=10000) so the frozen K2 result in
+    results/k2_preliminary.json reproduces to the digit. (An exact full-enumeration
+    variant is deterministic but shifts the reviewed Table 2 p-values by ~0.001-0.01;
+    not adopted for the camera-ready to avoid churning numbers the reviewers saw.)
 
     alternative:
       'greater' for H1 (rho > 0)
@@ -80,13 +100,20 @@ def permutation_test_spearman(x: np.ndarray, y: np.ndarray, alternative: str = "
 
 
 def load_calibration_table(results_json: Path,
-                            include_split_types: tuple[str, ...] | None = None
+                            include_split_types: tuple[str, ...] | None = None,
+                            predictors: tuple[str, ...] | None = FROZEN_K2_PREDICTORS,
+                            datasets: tuple[str, ...] | None = FROZEN_K2_DATASETS,
                             ) -> list[dict]:
     """Flatten baselines/results.json rows into a per-(predictor, dataset, alpha,
     variant, score) calibration-deviation table.
 
     By default excludes ``cross_cell_line`` rows (which are split-type 3 and
     not a 5th K2 dataset). Pass ``include_split_types=()`` to include all.
+
+    By default also restricts to the frozen K2 instrument (``FROZEN_K2_PREDICTORS``
+    x ``FROZEN_K2_DATASETS``) so the recompute reproduces Table 2 instead of being
+    corrupted by post-freeze Phase-2 predictors/datasets. Pass ``predictors=None``
+    / ``datasets=None`` to include everything (Phase-2 exploratory analysis).
     """
     if include_split_types is None:
         # K2 default: only within-perturbation cells (split #1)
@@ -98,6 +125,10 @@ def load_calibration_table(results_json: Path,
         if "error" in r and "scores" not in r:
             continue
         if r.get("split_type", "") not in include_split_types:
+            continue
+        if predictors is not None and r.get("predictor") not in predictors:
+            continue
+        if datasets is not None and r.get("dataset") not in datasets:
             continue
         for score_name, sr in r.get("scores", {}).items():
             if isinstance(sr, dict) and "error" not in sr:
@@ -229,12 +260,21 @@ def cross_dataset_h1b(rows: list[dict],
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--results", default="baselines/results.json")
-    p.add_argument("--out", default="results/k2_preliminary.json")
+    # Default out is a recompute scratch file, NOT the frozen authoritative record
+    # results/k2_preliminary.json (which Table 2 + Fig 3 read). Overwrite the frozen
+    # file only with an explicit --out, so a routine re-run can never clobber it.
+    p.add_argument("--out", default="results/k2_recompute.json")
     p.add_argument("--n_perm", type=int, default=10_000)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--all-predictors", action="store_true",
+                   help="include post-freeze Phase-2 predictors/datasets (corrupts "
+                        "the frozen K2 instrument; for exploratory analysis only)")
     args = p.parse_args()
 
-    rows = load_calibration_table(Path(args.results))
+    if args.all_predictors:
+        rows = load_calibration_table(Path(args.results), predictors=None, datasets=None)
+    else:
+        rows = load_calibration_table(Path(args.results))
     print(f"[k2] loaded {len(rows)} rows from {args.results}")
 
     # Count predictors and datasets present
