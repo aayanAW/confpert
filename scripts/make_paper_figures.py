@@ -258,17 +258,21 @@ def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
     (predictor, dataset), one panel per dataset incl. Tahoe and the STATE point.
 
     The scatter POINTS are recomputed from baselines/results.json using the
-    k2_analysis.py recipe restricted to the frozen capacity set (K2_CAPACITY_RANK:
-    9 predictors, or 8 for Tahoe which has no GEARS row). These are real points;
-    their Spearman rho reproduces the Table 2 value EXACTLY for Tahoe (+0.707,
-    n=8), Replogle K562 (+0.100, n=9) and Adamson (-0.310, n=9), and to <0.015 for
-    Replogle RPE1 (+0.762 vs +0.756) and Norman (+0.583 vs +0.569) -- the residual
-    is the permutation-test averaging in the frozen analysis and changes no
-    verdict. The summary rho, p, n and pass flag PRINTED in each panel title are
-    read straight from results/k2_preliminary.json, the only K2 results file whose
-    per-dataset rho/p/n match Table 2 (tab:k2) for all five datasets -- including
-    the STATE-augmented Tahoe n=8 PASS that k2_state_n8.json is stale on (it still
-    carries Tahoe rho=0.559, n=7). Net: 2 of 5 datasets pass; H1 overall fails.
+    k2_analysis.py recipe restricted to the frozen capacity set (K2_CAPACITY_RANK).
+    The summary rho, p, n and pass flag PRINTED in each panel title are read
+    straight from results/k2_state_n8.json, the K2 results file whose per-dataset
+    rho/p/n match the reviewed Table 2 (tab:k2) for all five datasets: Replogle
+    RPE1 (+0.756, p=0.012, n=9, PASS), Norman (+0.569, p=0.057, n=9), Tahoe
+    (+0.559, p=0.105, n=7), Replogle K562 (+0.100, n=9), Adamson (-0.310, n=9).
+    Net: 1 of 5 datasets pass (RPE1 only); H1 overall fails.
+
+    NOTE: do NOT switch this to results/k2_preliminary.json. That file carries a
+    Tahoe row at n=8, rho=+0.707, PASS (-> "2 of 5"), but STATE was never run on
+    Tahoe -- baselines/results.json contains zero state x tahoe rows (STATE landed
+    only on norman/replogle_k562/replogle_rpe1/adamson; STATE-Tahoe was deferred
+    for the Modal heartbeat failure, see paper Limitations). Reading that file made
+    this figure render "2 of 5" while Table 2 said "1 of 5" -- a figure/table
+    contradiction. The honest, reviewer-seen result is 1 of 5.
     """
     try:
         from adjustText import adjust_text
@@ -276,11 +280,12 @@ def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
     except Exception:  # pragma: no cover - adjustText is expected to be present
         _have_adjust = False
 
-    # Authoritative frozen summary. k2_preliminary.json is the ONLY K2 results
-    # file whose per-dataset rho/p/n match Table 2 (tab:k2) for all 5 datasets,
-    # including the STATE-augmented Tahoe (rho=+0.707, p=0.033, n=8, PASS) and the
-    # resulting "2 of 5 pass". k2_state_n8.json is stale on Tahoe (0.559, n=7).
-    with open(RESULTS / "k2_preliminary.json") as f:
+    # Authoritative frozen summary = results/k2_state_n8.json: the K2 file whose
+    # per-dataset rho/p/n match the reviewed Table 2 (tab:k2) on all 5 datasets,
+    # with the honest Tahoe row (rho=+0.559, p=0.105, n=7; STATE deferred) and the
+    # resulting "1 of 5 pass". See the docstring note: k2_preliminary.json's Tahoe
+    # n=8 PASS is not backed by data (zero state x tahoe rows in results.json).
+    with open(RESULTS / "k2_state_n8.json") as f:
         summary = json.load(f)["H1_capacity_hypothesis"]["per_dataset"]
 
     # Raw rows for the scatter points.
