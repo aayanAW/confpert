@@ -23,6 +23,8 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 PAPER = ROOT / "paper"
+RESULTS = ROOT / "results"
+BASELINES = ROOT / "baselines"
 PAPER.mkdir(parents=True, exist_ok=True)
 
 PREDICTOR_PARAMS = {
@@ -34,6 +36,51 @@ PREDICTOR_PARAMS = {
     "svaeplus": 1e7,
     "biolord": 2e7,
     "gears_uncertainty": 5e7,
+}
+
+# Capacity rank (low -> high), copied verbatim from scripts/k2_analysis.py so the
+# scatter x-axis matches the statistic the H1 Spearman test was run on. Foundation
+# models share the top tier (rank 8). NOTE: the frozen K2 result in Table 2 /
+# results/k2_state_n8.json was computed on the 9-predictor set below (the three
+# extra foundation models geneformer/scgpt/scfoundation were added to
+# baselines/results.json AFTER K2 was frozen, so they are excluded here to keep
+# the plotted points, rho, p and n consistent with Table 2).
+K2_CAPACITY_RANK = {
+    "mean": 0,
+    "noisy_mean": 1,
+    "ahlmann_bilinear_ridge": 2,
+    "scgen": 3,
+    "cpa": 4,
+    "svaeplus": 5,
+    "biolord": 6,
+    "gears_uncertainty": 7,
+    "state": 8,
+}
+
+# The 6-score set the K2 calibration deviation is averaged over (matches k2_analysis.py).
+K2_SCORE_SET = ["ks", "w1", "energy", "mmd_rbf", "bimodality_mismatch", "variance_ratio_dev"]
+
+# Short, non-overlapping predictor codes for per-point labels at print size.
+K2_PREDICTOR_CODE = {
+    "mean": "mean",
+    "noisy_mean": "noisy",
+    "ahlmann_bilinear_ridge": "ridge",
+    "scgen": "scGen",
+    "cpa": "CPA",
+    "svaeplus": "sVAE+",
+    "biolord": "biolord",
+    "gears_uncertainty": "GEARS",
+    "state": "STATE",
+}
+
+# Dataset display order + pretty names for the K2 panels (matches Table 2 row order).
+K2_DATASET_ORDER = ["replogle_rpe1", "tahoe", "norman", "replogle_k562", "adamson"]
+K2_DATASET_PRETTY = {
+    "replogle_rpe1": "Replogle RPE1",
+    "tahoe": "Tahoe-100M",
+    "norman": "Norman",
+    "replogle_k562": "Replogle K562",
+    "adamson": "Adamson",
 }
 
 PRETTY_NAMES = {
@@ -182,61 +229,143 @@ def fig_k1_bimodality_bars(rows: list, alpha: float = 0.20,
     print(f"[fig] -> {PAPER / outfile}")
 
 
+def _k2_agg_calibration_deviation(raw_rows: list, dataset: str) -> dict:
+    """Mean calibration deviation per predictor on a dataset, averaged over the
+    K2 score set, alpha and noise variant. Mirrors k2_analysis.py exactly so the
+    plotted points reproduce the Table 2 Spearman rho/p/n.
+
+    `raw_rows` are the raw rows from baselines/results.json (each with a nested
+    `scores` dict), NOT the flattened rows from load_results().
+    """
+    per_pred: dict = {}
+    for r in raw_rows:
+        if r.get("dataset") != dataset:
+            continue
+        scores = r.get("scores", {})
+        for sname in K2_SCORE_SET:
+            sr = scores.get(sname)
+            if not isinstance(sr, dict):
+                continue
+            cd = sr.get("calibration_deviation")
+            if cd is None:
+                continue
+            per_pred.setdefault(r["predictor"], []).append(cd)
+    return {p: float(np.mean(v)) for p, v in per_pred.items() if v}
+
+
 def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
-    """4-panel scatter plot: log(params) vs calibration deviation per
-    (predictor, dataset). Annotate rho + p from results/k2_8predictor.json."""
-    with open(ROOT / "results" / "k2_8predictor.json") as f:
-        k2 = json.load(f)
+    """5-panel scatter: capacity rank vs mean calibration deviation per
+    (predictor, dataset), one panel per dataset incl. Tahoe and the STATE point.
 
-    fig, axes = plt.subplots(2, 2, figsize=(11, 8), sharey=True)
-    datasets = ["norman", "replogle_rpe1", "adamson", "replogle_k562"]
-    for ax, ds in zip(axes.flat, datasets):
-        # Aggregate calibration deviation per predictor on this dataset
-        agg: dict[str, list[float]] = {}
-        for r in rows:
-            if r["dataset"] != ds or r["calibration_deviation"] is None:
-                continue
-            agg.setdefault(r["predictor"], []).append(r["calibration_deviation"])
-        x_vals, y_vals, names = [], [], []
-        for p, devs in agg.items():
-            if p not in PREDICTOR_PARAMS:
-                continue
-            params = PREDICTOR_PARAMS[p]
-            x = np.log(max(params, 1))
-            y = float(np.mean(devs))
-            x_vals.append(x)
-            y_vals.append(y)
-            names.append(PRETTY_NAMES.get(p, p))
+    The scatter POINTS are recomputed from baselines/results.json using the
+    k2_analysis.py recipe restricted to the frozen capacity set (K2_CAPACITY_RANK:
+    9 predictors, or 8 for Tahoe which has no GEARS row). These are real points;
+    their Spearman rho reproduces the Table 2 value EXACTLY for Tahoe (+0.707,
+    n=8), Replogle K562 (+0.100, n=9) and Adamson (-0.310, n=9), and to <0.015 for
+    Replogle RPE1 (+0.762 vs +0.756) and Norman (+0.583 vs +0.569) -- the residual
+    is the permutation-test averaging in the frozen analysis and changes no
+    verdict. The summary rho, p, n and pass flag PRINTED in each panel title are
+    read straight from results/k2_preliminary.json, the only K2 results file whose
+    per-dataset rho/p/n match Table 2 (tab:k2) for all five datasets -- including
+    the STATE-augmented Tahoe n=8 PASS that k2_state_n8.json is stale on (it still
+    carries Tahoe rho=0.559, n=7). Net: 2 of 5 datasets pass; H1 overall fails.
+    """
+    try:
+        from adjustText import adjust_text
+        _have_adjust = True
+    except Exception:  # pragma: no cover - adjustText is expected to be present
+        _have_adjust = False
 
-        ax.scatter(x_vals, y_vals, s=60, color="steelblue", edgecolor="navy")
-        for x, y, n in zip(x_vals, y_vals, names):
-            ax.annotate(n, (x, y), xytext=(5, 5), textcoords="offset points",
-                        fontsize=8)
-        # Trend line (least squares)
-        if len(x_vals) >= 2:
-            xa = np.array(x_vals)
-            ya = np.array(y_vals)
+    # Authoritative frozen summary. k2_preliminary.json is the ONLY K2 results
+    # file whose per-dataset rho/p/n match Table 2 (tab:k2) for all 5 datasets,
+    # including the STATE-augmented Tahoe (rho=+0.707, p=0.033, n=8, PASS) and the
+    # resulting "2 of 5 pass". k2_state_n8.json is stale on Tahoe (0.559, n=7).
+    with open(RESULTS / "k2_preliminary.json") as f:
+        summary = json.load(f)["H1_capacity_hypothesis"]["per_dataset"]
+
+    # Raw rows for the scatter points.
+    with open(BASELINES / "results.json") as f:
+        raw_rows = json.load(f)["rows"]
+
+    names = [d for d in K2_DATASET_ORDER if d in summary]
+    n_total = len(names)
+    n_pass = sum(1 for d in names if summary[d].get("passes_preregistered_threshold"))
+
+    # 2x3 grid for 5 panels; the trailing slot is removed.
+    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    axes = axes.flatten()
+
+    for i, ds in enumerate(names):
+        ax = axes[i]
+        agg = _k2_agg_calibration_deviation(raw_rows, ds)
+
+        pts = []  # (rank, dev, predictor)
+        for p, dev in agg.items():
+            rank = K2_CAPACITY_RANK.get(p)
+            if rank is None:  # excludes geneformer/scgpt/scfoundation (post-freeze)
+                continue
+            pts.append((rank, dev, p))
+        pts.sort()
+
+        xs = [p[0] for p in pts]
+        ys = [p[1] for p in pts]
+        codes = [K2_PREDICTOR_CODE.get(p[2], p[2]) for p in pts]
+
+        s = summary[ds]
+        rho, p_val, n = s["rho"], s["p_value"], s["n_predictors"]
+        passed = bool(s.get("passes_preregistered_threshold"))
+        # near = positive trend with p<0.10 but not meeting the rho>0.5 & p<0.05 rule.
+        near = (not passed) and (rho > 0) and (p_val < 0.10)
+        color = "#228833" if passed else ("#cc6600" if near else "#ee6677")
+
+        # STATE highlighted as a star (it is the augmenting point this figure is about).
+        for (x, y, pr) in pts:
+            if pr == "state":
+                ax.scatter([x], [y], s=150, marker="*", color=color,
+                           edgecolor="black", linewidth=0.6, zorder=4)
+            else:
+                ax.scatter([x], [y], s=55, color=color,
+                           edgecolor="black", linewidth=0.4, zorder=3)
+
+        # Least-squares trend line for visual guidance.
+        if len(xs) >= 2:
+            xa, ya = np.array(xs, float), np.array(ys, float)
             slope, intercept = np.polyfit(xa, ya, 1)
-            xs = np.linspace(xa.min(), xa.max(), 50)
-            ax.plot(xs, slope * xs + intercept, "k--", alpha=0.4, lw=1)
-        # rho + p annotation from K2 results
-        ds_k2 = k2["H1_capacity_hypothesis"]["per_dataset"].get(ds, {})
-        if isinstance(ds_k2, dict) and "rho" in ds_k2:
-            rho, p = ds_k2["rho"], ds_k2["p_value"]
-            n = ds_k2["n_predictors"]
-            ax.set_title(f"{DATASET_PRETTY[ds]}\nρ={rho:+.3f} p={p:.3f} n={n}")
-        else:
-            ax.set_title(DATASET_PRETTY[ds])
-        ax.set_xlabel("log(parameters)")
-        if ax in axes[:, 0]:
-            ax.set_ylabel("Mean calibration deviation\n(over α, score)")
+            gx = np.linspace(xa.min(), xa.max(), 50)
+            ax.plot(gx, slope * gx + intercept, "k--", alpha=0.35, lw=1, zorder=1)
+
+        texts = [ax.text(x, y, lab, fontsize=8) for x, y, lab in zip(xs, ys, codes)]
+        if _have_adjust and texts:
+            adjust_text(
+                texts, ax=ax,
+                arrowprops=dict(arrowstyle="-", color="gray", lw=0.5),
+                expand_points=(1.5, 1.7),
+                expand_text=(1.2, 1.4),
+                force_text=(0.4, 0.6),
+            )
+
+        verdict = "PASS" if passed else ("near" if near else "no")
+        ax.set_title(
+            f"{K2_DATASET_PRETTY[ds]}\nρ={rho:+.3f}  p={p_val:.3f}  n={n}  ({verdict})",
+            fontsize=10,
+        )
+        ax.set_xlabel("capacity rank (low → high)")
+        ax.set_ylabel("mean calibration deviation\n(over score, α)")
         ax.grid(True, alpha=0.3)
-    fig.suptitle("K2 H1 capacity hypothesis: 0/4 datasets pass pre-reg threshold (ρ>0.5, p<0.05)\n"
-                 "→ honest null per pre-registration outcome (D)",
-                 fontsize=11)
-    plt.tight_layout()
-    plt.savefig(PAPER / outfile)
-    plt.close()
+        ax.margins(x=0.14, y=0.20)
+
+    # Remove any unused trailing axes (the 6th slot in the 2x3 grid).
+    for j in range(n_total, len(axes)):
+        fig.delaxes(axes[j])
+
+    fig.suptitle(
+        f"K2 H1 capacity hypothesis: {n_pass} of {n_total} datasets pass; "
+        f"H1 overall fails (needs ≥3/4). Star = STATE.",
+        fontsize=13,
+    )
+    fig.tight_layout(rect=[0, 0, 1, 0.95])
+    fig.savefig(PAPER / outfile)
+    plt.close(fig)
     print(f"[fig] -> {PAPER / outfile}")
 
 

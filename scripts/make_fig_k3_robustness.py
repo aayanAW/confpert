@@ -58,14 +58,19 @@ def main() -> None:
     ax1.spines["top"].set_visible(False)
     ax1.spines["right"].set_visible(False)
 
-    ax2.plot(Ks, ratio, "o-", color="#2D6CDF", linewidth=2, markersize=8,
+    # Plot panel (b) against evenly spaced categorical positions `x` (same as
+    # panel a) instead of the numeric K values on a log scale. The previous
+    # log-scaled version triggered matplotlib's LogLocator/LogFormatterSciNotation
+    # to draw a SECOND set of minor tick labels (2x10^1, 5x10^1, ...) on top of
+    # the {25,50,100,200} labels. Categorical positions give exactly one clean
+    # tick set.
+    ax2.plot(x, ratio, "o-", color="#2D6CDF", linewidth=2, markersize=8,
              label="ConfPert / uncalibrated")
     ax2.axhline(1.0, color="gray", linestyle="--", linewidth=1, label="parity")
-    for K, r in zip(Ks, ratio):
-        ax2.annotate(f"{r:.2f}×", (K, r), textcoords="offset points",
+    for xi, r in zip(x, ratio):
+        ax2.annotate(f"{r:.2f}×", (xi, r), textcoords="offset points",
                      xytext=(6, 6), fontsize=9)
-    ax2.set_xscale("log")
-    ax2.set_xticks(Ks)
+    ax2.set_xticks(x)
     ax2.set_xticklabels([str(K) for K in Ks])
     ax2.set_xlabel("top-K signature size (genes)")
     ax2.set_ylabel("ratio")
