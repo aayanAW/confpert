@@ -115,6 +115,80 @@ class PerturbationConformal:
 
 
 # ---------------------------------------------------------------------------
+# Weighted per-perturbation head under covariate shift (Tibshirani 2019)
+# ---------------------------------------------------------------------------
+
+
+class WeightedPerturbationConformal:
+    """Weighted split-conformal head for covariate shift (Tibshirani et al. 2019).
+
+    Standard split-conformal assumes calibration and test scores are exchangeable.
+    Under covariate shift (e.g. the K562 -> RPE1 cross-cell-line transfer, where
+    unweighted coverage collapses toward 0) that assumption fails. Tibshirani 2019
+    restores finite-sample validity by weighting each calibration score by its
+    likelihood ratio ``w_i = dP_test / dP_calib(x_i)`` and taking the weighted
+    ``1 - alpha`` quantile of the calibration scores.
+
+    The test point carries its own mass ``w_{n+1}`` in the Tibshirani
+    normalisation. That weight is unknown at calibration time, so we substitute a
+    conservative upper bound -- the largest calibration weight -- which can only
+    raise the threshold (and therefore coverage), never lower it below nominal.
+    With uniform weights this reduces to the standard ``(n+1)``-corrected
+    split-conformal quantile (see ``split_conformal_quantile``).
+
+    Unlike ``PerturbationConformal`` (which scores populations via ``score_fn``),
+    this head operates directly on precomputed scalar discrepancy scores plus their
+    importance weights, so it can be dropped onto cached cross-cell-line scores.
+    """
+
+    def __init__(self, alpha: float = 0.1):
+        if not 0.0 < alpha < 1.0:
+            raise ValueError("alpha must be in (0, 1)")
+        self.alpha = alpha
+        self.tau_: float | None = None
+
+    def calibrate(self, calib_scores, weights) -> "WeightedPerturbationConformal":
+        s = np.asarray(calib_scores, dtype=float)
+        w = np.asarray(weights, dtype=float)
+        if s.shape != w.shape:
+            raise ValueError("calib_scores and weights must have the same shape")
+        mask = ~(np.isnan(s) | np.isnan(w))
+        s, w = s[mask], w[mask]
+        if s.size == 0:
+            self.tau_ = float("nan")
+            return self
+        if np.any(w < 0):
+            raise ValueError("weights must be non-negative")
+        total = float(w.sum())
+        if total <= 0.0:
+            raise ValueError("weights must have a positive sum")
+        order = np.argsort(s)
+        s, w = s[order], w[order]
+        # Weighted quantile (Tibshirani 2019): normalise including a conservative
+        # test-point mass (the max calibration weight), then take the smallest
+        # score whose cumulative normalised weight reaches 1 - alpha.
+        wn = w / (total + w.max())
+        cw = np.cumsum(wn)
+        idx = int(np.searchsorted(cw, 1.0 - self.alpha, side="left"))
+        if idx >= s.size:
+            # 1 - alpha mass unreachable after the conservative deflation: fall
+            # back to the largest score (most conservative threshold).
+            self.tau_ = float(s[-1])
+        else:
+            self.tau_ = float(s[idx])
+        return self
+
+    def coverage(self, test_scores) -> float:
+        if self.tau_ is None:
+            raise RuntimeError("calibrate() must be called before coverage()")
+        t = np.asarray(test_scores, dtype=float)
+        t = t[~np.isnan(t)]
+        if t.size == 0:
+            return float("nan")
+        return float(np.mean(t <= self.tau_))
+
+
+# ---------------------------------------------------------------------------
 # Per-gene CD-split head (HetPert v1, Romano-Izbicki lineage)
 # ---------------------------------------------------------------------------
 
