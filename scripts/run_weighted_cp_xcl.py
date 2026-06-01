@@ -5,10 +5,20 @@ finite-sample coverage on the Replogle K562 -> RPE1 transfer where the unweighte
 split-conformal head (the paper's reported result) collapses toward 0.
 
 Runs on CPU. The two Replogle h5ads (K562 ~6.7 GB, RPE1) live on the Modal volume
-`causeflow-artifacts:/data/`; pull them (or run this on a Modal CPU worker with the
-volume mounted) before invoking. NOT executed in the 2026-05-31 session -- the data
-exceeds local free disk; this harness is archival-paper Step 8, runnable as-is once
-the data is present. No result is checked in until a verified run produces one.
+`causeflow-artifacts:/data/`; pull them, or (cleaner, avoids local disk) run on a
+Modal CPU worker via `scripts/modal_weighted_cp_xcl.py`, which mounts the volume and
+calls `run()` here verbatim.
+
+EXECUTED 2026-05-31 on a Modal CPU worker (ahlmann_bilinear_ridge predictor,
+C_per_gene_marginal noise, seed 42); result committed at
+`results/weighted_cp_xcl.json`. Finding (35 common perts, 92 genes, ESS 25.2/35):
+weighted CP recovers cross-cell-line coverage on bimodality (alpha=0.20:
+0.057 -> 0.857) but NOT on the four shape metrics KS/W1/energy/MMD (0.000 ->
+0.000) -- for those the RPE1 test scores lie entirely above the K562 calibration
+support, so reweighting the calibration set cannot cover them (not a weight-
+degeneracy / low-ESS failure; the ESS is healthy). Partial recovery; motivates
+Mondrian-by-cell-line stratification. Archival-paper material; the accepted poster
+is unchanged.
 
 Pipeline:
   1. Build the K562 (calib) -> RPE1 (test) split via the existing runner's
