@@ -331,13 +331,13 @@ The pre-registration is committed to git at commit \texttt{c7046e4b} (2026-05-03
 \begin{table}[h]
 \centering
 \small
-\begin{tabular}{ll}
+\begin{tabular}{@{}l p{0.72\linewidth}@{}}
 \toprule
 Symbol / term & Meaning \\
 \midrule
 $K_1$ & Calibration-coverage benchmark (predictors $\times$ datasets $\times$ discrepancies $\times$ $\alpha$) \\
 $K_2$ & Pre-registered capacity hypotheses ($H_1$, $H_{1b}$) on calibration vs.\ scale \\
-$K_3$ & Downstream PRISM drug-resistance signature recovery under BH-FDR \\
+$K_3$ & Downstream PRISM drug-resistance signature enrichment over a random-gene null under BH-FDR \\
 $H_1$ & ``Capacity hurts calibration'': Spearman $\rho>0.5$, $p<0.05$ on $\geq 3$ of 4 datasets \\
 $H_{1b}$ & ``Data helps calibration'': Spearman $\rho<-0.5$ on $\log N_{\text{train}}$, cross-dataset \\
 $\alpha$ & Target miscoverage; nominal coverage $1-\alpha$, $\alpha \in \{0.05, 0.10, 0.20\}$ \\
