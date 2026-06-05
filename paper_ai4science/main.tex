@@ -174,15 +174,78 @@ STATE-600M & 0.20 & 0.20 & 0.20 & 0.13 & 0.20 & 0.20 \\
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.85\columnwidth]{fig_k1_bimodality.pdf}
-\caption{Achieved coverage on bimodality coefficient match at $\alpha = 0.20$ on Norman. Dashed line is the nominal target $1 - \alpha = 0.800$; sVAE+ and biolord land closest to nominal.}
+\caption{Achieved coverage on bimodality coefficient match at $\alpha = 0.20$ on Norman ($n=9$ predictors). Dashed line is the nominal target $1 - \alpha = 0.800$; sVAE+ and GEARS-unc land exactly on nominal.}
 \label{fig:k1bimod}
 \end{figure}
 
+\subsection{Calibration across five datasets}
+Table~\ref{tab:k1multi} extends K1 to all five datasets, reporting per-predictor calibration deviation averaged over the six discrepancies and the within-perturbation noise variants at $\alpha = 0.20$. Calibration is dataset-dependent: Norman and Tahoe-100M are the best-calibrated contexts (most predictors below $0.15$), whereas Adamson is hardest and the larger models degrade sharply on it (CPA $0.52$, sVAE+ $0.53$). The largest model, STATE-600M, carries the highest or near-highest deviation on four of the five datasets, which anticipates the capacity trend tested in K2.
+
+\begin{table*}[t]
+\caption{K1 calibration deviation at $\alpha = 0.20$, averaged over the six discrepancies and the within-perturbation noise variants, per predictor and dataset (lower is better). GEARS-uncertainty has no Tahoe row (no compatible \texttt{PertData}).}
+\label{tab:k1multi}
+\vskip 0.1in
+\begin{center}
+\begin{small}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccccccccc}
+\toprule
+Dataset & Mean & Noisy mean & Bilinear ridge & scGen & CPA & biolord & sVAE+ & GEARS-unc & STATE-600M \\
+\midrule
+Norman        & 0.05 & 0.05 & 0.05 & 0.09 & 0.14 & 0.06 & 0.12 & 0.10 & 0.19 \\
+Replogle K562 & 0.12 & 0.13 & 0.13 & 0.10 & 0.10 & 0.08 & 0.10 & 0.09 & 0.18 \\
+Replogle RPE1 & 0.11 & 0.13 & 0.11 & 0.16 & 0.16 & 0.16 & 0.19 & 0.18 & 0.18 \\
+Adamson       & 0.24 & 0.28 & 0.19 & 0.32 & 0.52 & 0.20 & 0.53 & 0.18 & 0.22 \\
+Tahoe-100M    & 0.08 & 0.06 & 0.10 & 0.09 & 0.13 & 0.12 & 0.08 & --- & 0.19 \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table*}
+
+\subsection{Coverage across miscoverage levels}
+Proposition~1 predicts achieved coverage of at least $1 - \alpha$ under exchangeability. Figure~\ref{fig:alpha} plots achieved coverage against the nominal target across $\alpha \in \{0.05, 0.10, 0.20\}$, averaged over predictors and discrepancies. On four of the five datasets coverage sits on or above the diagonal --- conservative, as the finite-sample correction predicts. Adamson is the exception: its achieved coverage is flat near $0.81$ regardless of $\alpha$, so it over-covers at $\alpha = 0.20$ but under-covers at $\alpha = 0.05$. This is a within-distribution symptom of the exchangeability caveat: the held-out Adamson perturbations are not exchangeable with the calibration set, so the marginal guarantee degrades even without a cross-cell-line shift.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\columnwidth]{fig_alpha_sensitivity.pdf}
+\caption{Achieved coverage versus the nominal target $1 - \alpha$ (mean over the nine predictors and six discrepancies, within-perturbation split). Points on or above the dashed diagonal are conservative and meet the coverage guarantee; Adamson is flat near $0.81$ and under-covers at small $\alpha$.}
+\label{fig:alpha}
+\end{figure}
+
+\subsection{Noise-model ablation}
+The point predictors carry no cell-level variance, so ConfPert samples synthetic cells from one of four noise models (Appendix~\ref{app:noise}); all four are reported with no cherry-picking. Table~\ref{tab:ablation} isolates this component on Norman at $\alpha = 0.20$. The noise model is what lets a point predictor calibrate on the variance-sensitive metric: with no noise (variant A) the bilinear ridge has variance-ratio deviation $0.12$, while the isotropic and full-covariance variants restore exact coverage ($0.00$). The choice barely moves the deviation averaged over all six discrepancies, because the cumulative-distribution metrics are insensitive to it.
+
+\begin{table}[h]
+\caption{Noise-model ablation for the two point predictors on Norman at $\alpha = 0.20$: mean deviation over all six discrepancies, and the variance-ratio deviation alone (the metric the noise model most affects). A = no noise; B = isotropic; C = per-gene marginal; D = full covariance.}
+\label{tab:ablation}
+\vskip 0.1in
+\begin{center}
+\begin{small}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Mean} & \multicolumn{2}{c}{Bilinear ridge} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Noise variant & all 6 & var.\ ratio & all 6 & var.\ ratio \\
+\midrule
+A (no noise)        & 0.05 & 0.04 & 0.08 & 0.12 \\
+B (isotropic)       & 0.06 & \textbf{0.00} & 0.03 & \textbf{0.00} \\
+C (per-gene)        & 0.05 & 0.08 & 0.06 & 0.08 \\
+D (full covariance) & 0.03 & \textbf{0.00} & 0.04 & \textbf{0.00} \\
+\bottomrule
+\end{tabular}
+\end{small}
+\end{center}
+\vskip -0.1in
+\end{table}
+
 \section{K2: Pre-registered honest null}
 
-We pre-registered two hypotheses with timestamp \texttt{c7046e4b} before any K1 first run: \textbf{H1 (capacity hurts)} requires Spearman $\rho > 0.5$ ($p < 0.05$) between $\log(\text{params})$ and $|1 - \alpha - \text{achieved coverage}|$ on $\geq 3$ of 4 datasets; \textbf{H1b (data helps)} requires Spearman $\rho < -0.5$ ($p < 0.05$) between $\log(N_{\text{train cells}})$ and calibration deviation cross-dataset.
+Two hypotheses were pre-registered before any K1 first run (the commit hash is given in the reproducibility section). H1 (capacity hurts) requires a Spearman correlation $\rho > 0.5$ at $p < 0.05$ between $\log(\text{params})$ and the calibration deviation $|1 - \alpha - \text{achieved coverage}|$ on at least 3 of the 4 pre-registered datasets; H1b (data helps) requires $\rho < -0.5$ at $p < 0.05$ between $\log(N_{\text{train cells}})$ and the deviation across datasets. The $p$-values come from a one-sided Monte-Carlo permutation test ($10^4$ label permutations, seed $0$, $p = (1 + \#\{\rho_{\text{perm}} \geq \rho\})/(1 + 10^4)$) rather than the parametric Spearman approximation.
 
-\subsection{Result: H1 partial positive (2/5); H1 + H1b OVERALL null}
+\subsection{Result: H1 fails (1 of 4 pre-registered datasets; 2 of 5 with the post-registration split); H1b null}
 
 \begin{table}[h]
 \caption{K2 H1 capacity hypothesis per dataset, with STATE 600M wrapped on all 5 datasets. $n_{\text{pred}}$ = 9 wrappable predictors (8 pre-reg + NoisyMean control) on the four Perturb-seq datasets and 8 on Tahoe-100M (no GEARS row); excluding NoisyMean does not change the disposition.}
