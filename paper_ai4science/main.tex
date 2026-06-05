@@ -401,10 +401,10 @@ The Tahoe-100M subset is constructed by the \texttt{tahoe\_subset\_build} Modal 
 \section{K3 Top-K Robustness Numerical Detail}
 \label{app:k3}
 
-Per-$K$ BH-FDR pass counts at $q = 0.05$ over the joint compound $\times$ Hallmark-pathway grid (10 selective compounds $\times$ 50 Hallmark pathways for the ConfPert path; uncalibrated baseline computed on the same compound set). $K=50$ is the canonical pre-registered choice; $K=25, 100, 200$ are robustness-check extensions added in this work.
+Per-$K$ BH-FDR pass counts at $q = 0.05$ over the joint compound $\times$ Hallmark-pathway grid (10 selective compounds $\times$ 50 Hallmark pathways for the ConfPert path; the uncalibrated baseline is an equal-size random-gene null on the same compound set). $K=50$ is the canonical pre-registered choice; $K=25, 100, 200$ are robustness-check extensions added in this work.
 
 \begin{table}[h]
-\caption{K3 top-$K$ robustness sweep. Pre-registered success requires $\geq 3$ ConfPert signatures + $\geq 2$ uncalibrated misses (PASSES at every $K$).}
+\caption{K3 top-$K$ robustness sweep. Pre-registered success requires $\geq 3$ enriched ConfPert signatures and $\geq 2$ random-null misses; it holds at every $K$. The ratio column is enrichment-over-null, not a comparison against a competing predictor.}
 \label{tab:k3}
 \centering
 \begin{tabular}{rrrrr}
