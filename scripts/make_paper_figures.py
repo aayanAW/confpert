@@ -36,6 +36,7 @@ PREDICTOR_PARAMS = {
     "svaeplus": 1e7,
     "biolord": 2e7,
     "gears_uncertainty": 5e7,
+    "state": 6e8,
 }
 
 # Capacity rank (low -> high), copied verbatim from scripts/k2_analysis.py so the
@@ -92,6 +93,7 @@ PRETTY_NAMES = {
     "svaeplus": "sVAE+",
     "biolord": "biolord",
     "gears_uncertainty": "GEARS-unc",
+    "state": "STATE-600M",
 }
 
 SCORE_PRETTY = {
@@ -299,7 +301,7 @@ def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
     n_pass = sum(1 for d in names if summary[d].get("passes_preregistered_threshold"))
 
     # 2x3 grid for 5 panels; the trailing slot is removed.
-    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    fig, axes = plt.subplots(2, 3, figsize=(16, 9.5))
     axes = axes.flatten()
 
     for i, ds in enumerate(names):
@@ -341,14 +343,17 @@ def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
             gx = np.linspace(xa.min(), xa.max(), 50)
             ax.plot(gx, slope * gx + intercept, "k--", alpha=0.35, lw=1, zorder=1)
 
-        texts = [ax.text(x, y, lab, fontsize=8) for x, y, lab in zip(xs, ys, codes)]
+        # STATE is drawn as a star and named in the suptitle ("Star = STATE"),
+        # so its text label is omitted to avoid colliding with the marker.
+        texts = [ax.text(x, y, K2_PREDICTOR_CODE.get(pr, pr), fontsize=9)
+                 for (x, y, pr) in pts if pr != "state"]
         if _have_adjust and texts:
             adjust_text(
                 texts, ax=ax,
                 arrowprops=dict(arrowstyle="-", color="gray", lw=0.5),
-                expand_points=(1.5, 1.7),
-                expand_text=(1.2, 1.4),
-                force_text=(0.4, 0.6),
+                expand_points=(2.0, 2.4),
+                expand_text=(1.6, 1.9),
+                force_text=(0.9, 1.1),
             )
 
         verdict = "PASS" if passed else ("near" if near else "no")
@@ -359,7 +364,7 @@ def fig_k2_h1_scatter(rows: list, outfile: str = "fig_k2_h1.pdf"):
         ax.set_xlabel("capacity rank (low → high)")
         ax.set_ylabel("mean calibration deviation\n(over score, α)")
         ax.grid(True, alpha=0.3)
-        ax.margins(x=0.14, y=0.20)
+        ax.margins(x=0.18, y=0.28)
 
     # Remove any unused trailing axes (the 6th slot in the 2x3 grid).
     for j in range(n_total, len(axes)):
