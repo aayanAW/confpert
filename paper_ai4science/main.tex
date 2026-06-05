@@ -162,7 +162,7 @@ STATE-600M & 0.20 & 0.20 & 0.20 & 0.13 & 0.20 & 0.20 \\
 \vskip -0.1in
 \end{table}
 
-\paragraph{sVAE+ achieves exact $0.800$ nominal coverage on bimodality and variance ratio.} The sparse-additive mechanism shift in \citet{bereket2023} produces heteroskedastic samples that recover bimodal cell-fate structure. Mean-only predictors achieve high variance-ratio deviation by construction; noise-augmented baselines calibrate well on shape metrics but lack realistic bimodality. Figure~\ref{fig:k1cal} visualises the per-(predictor, score) deviation; Figure~\ref{fig:k1bimod} highlights the bimodality coverage with sVAE+ at the exact-nominal target.
+\paragraph{sVAE+ reaches exact nominal coverage on the variance-sensitive metrics.} Among the eight predictors, sVAE+ is the only one with zero calibration deviation on \emph{both} bimodality match and the variance ratio (Table~\ref{tab:k1}); its sparse-additive mechanism shift \citep{bereket2023} produces heteroskedastic samples that recover bimodal cell-fate structure. The sub-$10^5$-parameter baselines (Mean, Noisy mean, Bilinear ridge), averaged over the four pre-registered noise variants, calibrate with low deviation across all six discrepancies, because the conformal threshold is fit on held-out scores irrespective of the predictor. Several higher-capacity models (CPA, sVAE+, GEARS-unc, STATE) instead carry $0.20$ deviation on the cumulative-distribution metrics (KS, Wasserstein-1, energy), foreshadowing the capacity trend tested in K2. Figure~\ref{fig:k1cal} shows the full per-(predictor, score) grid and Figure~\ref{fig:k1bimod} the bimodality coverage.
 
 \begin{figure}[h]
 \centering
