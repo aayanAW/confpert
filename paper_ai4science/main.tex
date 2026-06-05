@@ -558,8 +558,9 @@ Table~\ref{tab:hparams} summarises the key training hyperparameters for the eigh
 \caption{Predictor training hyperparameters (lightweight predictors run on CPU in \texttt{scripts/run\_k1\_baseline.py}; heavyweight predictors run on Modal A100 in \texttt{scripts/modal\_launch.py}).}
 \label{tab:hparams}
 \centering
-\small
-\begin{tabular}{lllll}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llll p{3.1cm}@{}}
 \toprule
 Predictor       & Backbone / lib                  & Epochs   & Batch & Other \\
 \midrule
