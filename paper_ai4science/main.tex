@@ -25,6 +25,13 @@
 \usepackage{amsthm}
 \usepackage{xcolor}
 
+\newtheorem{proposition}{Proposition}
+
+% Identity gate: blind by default. Set \camerareadytrue (and pass [accepted]
+% to icml2026) for the non-blind camera-ready so the repository URL appears.
+\newif\ifcameraready
+\camerareadyfalse
+
 % ICML running title (short form for header)
 \icmltitlerunning{ConfPert: Conformal Coverage for Perturbation Predictors}
 
