@@ -15,3 +15,18 @@ logs/
 SLEEP_*.md
 SLEEP_PROGRESS_*.md
 HANDOFF_*.md
+
+# LaTeX build artifacts (.bbl kept untracked here but force-add for arXiv if needed)
+*.aux
+*.blg
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.bcf
+*.run.xml
